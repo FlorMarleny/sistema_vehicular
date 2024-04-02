@@ -1,0 +1,36 @@
+:root {
+  --color-botonFunciones: #cb705d;
+  --color-textoBlanco: #ffff;
+}
+
+.logo {
+  margin: 10px;
+  width: 400px;
+  height: auto;
+}
+.button-container {
+  text-align: center;
+}
+.btn {
+  background-color: var(--color-botonFunciones);
+  color: var(--color-textoBlanco);
+  font-weight: bold;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.triangulo-equilatero-bottom-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-right: 50vw solid transparent;
+  border-left: 50vw solid var(--color-botonFunciones);
+  border-top: 50vh solid var(--color-botonFunciones);
+  border-bottom: 50vh solid transparent;
+  z-index: -1;
+}
