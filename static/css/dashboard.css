@@ -1,0 +1,19 @@
+.sidebar {
+  background-color: #cb705d;
+}
+.sidebar-logo {
+  max-width: 100%;
+  height: auto;
+  padding: 5px;
+}
+.navbar-location {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.navbar-location i {
+  margin-right: 5px;
+}
+.text-white {
+  color: #ffffff;
+}

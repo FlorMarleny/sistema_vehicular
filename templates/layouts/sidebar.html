@@ -1,0 +1,114 @@
+{% load static %}
+
+<div class="container-fluid">
+  <div class="row">
+
+    <nav class="col-md-2 d-none d-md-block sidebar " style="height: 100vh;">
+      <div class="sidebar-sticky">
+        <img
+          src="{% static 'img/Logo2.png' %}"
+          alt="Logo"
+          class="sidebar-logo"
+        />
+        <hr class="sidebar-divider" />
+
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              href="#"
+              data-toggle="collapse"
+              data-target="#submenu-lavanderia"
+              aria-expanded="false"
+              aria-controls="submenu-lavanderia"
+            >
+              <i class="fas fa-soap mr-2"></i>
+              Lavandería
+            </a>
+            <div class="collapse" id="submenu-lavanderia">
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#">
+                    Registrar Lavandería
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#">
+                    Historial de Lavandería
+                  </a>
+                </li>
+              </ul>
+              <hr class="sidebar-divider" />
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              href="#"
+              data-toggle="collapse"
+              data-target="#submenu-cochera"
+              aria-expanded="false"
+              aria-controls="submenu-cochera"
+            >
+              <i class="fas fa-car mr-2"></i>
+              Cochera
+            </a>
+            <div class="collapse" id="submenu-cochera">
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#">
+                    Registrar Cochera
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#">
+                    Historial de Cochera
+                  </a>
+                </li>
+              </ul>
+              <hr class="sidebar-divider" />
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              href="#"
+              data-toggle="collapse"
+              data-target="#submenu-caja"
+              aria-expanded="false"
+              aria-controls="submenu-caja"
+            >
+              <i class="fas fa-cash-register mr-2"></i>
+              Caja
+            </a>
+            <div class="collapse" id="submenu-caja">
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#"> Caja Lavadero </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white1" href="#"> Caja Cochera </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+      >
+        <h1 class="h2">Dashboard</h1>
+      </div>
+
+      <div class="row">
+        <!-- Agrega widgets, gráficos, etc., aquí -->
+      </div>
+    </main>
+  </div>
+</div>

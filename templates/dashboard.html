@@ -1,3 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+    <style>
+        .sidebar {
+            background-color: #cb705d; 
+        }
+        .sidebar-logo {
+            max-width: 100%;
+            height: auto;
+            padding: 5px;
+        }
+        .navbar-location {
+            color: #ffffff; /* Color de texto blanco */
+            text-decoration: underline; /* Subrayado */
+            font-weight: bold;
+        }
+        .navbar-location i {
+            margin-right: 5px; /* Margen derecho para el icono */
+        }
+        .text-white {
+            color: #ffffff; /* Color blanco */
+            font-weight: bold;
+        }
+        .text-white1 {
+            color: #ffffff; /* Color blanco */
+        }
+        .sidebar-divider {
+            border-top: 1px solid #ffffff; /* Color de la línea */
+            margin-top: 10px; /* Margen superior para separar la línea de la imagen */
+        }
+    </style>
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+
+{% comment %} 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,4 +71,4 @@
     <p>Hola {{ user.username }}, has iniciado sesión con éxito.</p>
     <p><a href="{% url 'logout' %}">Cerrar sesión</a></p>
 </body>
-</html>
+</html> {% endcomment %}
