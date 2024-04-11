@@ -1,3 +1,4 @@
+<!-- sidebar.html -->
 {% load static %}
 
 <div class="container-fluid">
@@ -28,12 +29,12 @@
             <div class="collapse" id="submenu-lavanderia">
               <ul class="nav flex-column">
                 <li class="nav-item">
-                  <a class="nav-link text-white1" href="#">
+                  <a class="nav-link text-white1" href="{% url 'registro_lavanderia' %}">
                     Registrar Lavandería
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white1" href="#">
+                  <a class="nav-link text-white1" href="{% url 'historial_lavanderia' %}">
                     Historial de Lavandería
                   </a>
                 </li>
@@ -91,6 +92,12 @@
                 <li class="nav-item">
                   <a class="nav-link text-white1" href="#"> Caja Cochera </a>
                 </li>
+
+                <li class="nav-item">
+                  <a href="{% url 'registrar_tarifa_vehiculo' %}">Registrar Tarifa de Vehículo</a>
+                </li>
+
+
               </ul>
             </div>
           </li>
@@ -98,17 +105,21 @@
       </div>
     </nav>
 
-    <!-- Contenido principal -->
+
+
+    {% comment %} <!-- Contenido principal -->
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-      >
-        <h1 class="h2">Dashboard</h1>
+      {% block content %}{% endblock %}
+
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" >
+        <h1 class="h2">Dashboard</h1> 
       </div>
 
       <div class="row">
         <!-- Agrega widgets, gráficos, etc., aquí -->
       </div>
-    </main>
-  </div>
-</div>
+    </main> {% endcomment %}
+
+  {% comment %} </div>
+</div>  {% endcomment %}
+

@@ -1,0 +1,40 @@
+<div class="container">
+    <h2>Registro de Lavandería</h2>
+    <form>
+        <div class="form-group">
+            <label for="dni">DNI:</label>
+            <input type="text" class="form-control" id="dniInput" placeholder="Ingrese el DNI">
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombres:</label>
+            <input type="text" class="form-control" id="nombre" readonly>
+        </div>
+        <div class="form-group">
+            <label for="apellido">Apellidos:</label>
+            <input type="text" class="form-control" id="apellido" readonly>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="buscarNombreApellido()">Buscar</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function buscarNombreApellido() {
+        var dni = $('#dniInput').val();
+
+        $.ajax({
+            url: 'https://api.apis.net.pe/v1/dni/' + dni,
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer apis-token-8038.WNWC8hV6ZnDUe2Ku3YF1Z8xVmBo1xscp'
+            },
+            success: function(response) {
+                $('#nombre').val(response.data.nombres);
+                $('#apellido').val(response.data.apellidoPaterno + ' ' + response.data.apellidoMaterno);
+            },
+            error: function(xhr, status, error) {
+                alert('Error al buscar el DNI: ' + xhr.responseText);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,167 @@
+<!-- registro_lavanderia.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifa</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tarifas.css' %}">
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      
+        <div class="container-fluid mt-5">
+            <div class="row">
+                <div class="col-md-4">
+                    
+                    <h5 class="mt-5"><i class="fas fa-car"></i> TARIFA DE VEHÍCULOS</h5>
+
+
+                    <div class="card">
+                        <div class="card-body">
+
+                            <form method="post" action="{% url 'registrar_tarifa_vehiculo' %}" class="needs-validation" >
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    {{ form.tipo_vehiculo.label_tag }}
+                                    {{ form.tipo_vehiculo }}
+                                </div>
+                                <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            {{ form.precio_manana.label_tag }}
+                                            {{ form.precio_manana }}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ form.precio_tarde.label_tag }}
+                                            {{ form.precio_tarde }}
+                                        </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.precio_noche.label_tag }}
+                                        {{ form.precio_noche }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.precio_dia_completo.label_tag }}
+                                        {{ form.precio_dia_completo }}
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.precio_lavado.label_tag }}
+                                        {{ form.precio_lavado }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.precio_cochera.label_tag }}
+                                        {{ form.precio_cochera }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group ">
+                                    <button type="submit" class="btn btn-primary  btn-block  btn-lg custom-btn">Guardar Tarifa</button>
+
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.querySelector('form');
+                            const inputs = form.querySelectorAll('input, select');
+
+                            inputs.forEach(function(input) {
+                                input.classList.add('form-control');
+                            });
+                        });
+                    </script>
+
+                </div>
+
+                <div class="col-md-8 ">
+
+                    <form method="get" action="{% url 'lista_tarifas' %}" class="form-inline my-2 my-lg-0 justify-content-end">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Buscar tipo de vehículo" aria-label="Search" name="q">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                    </form>
+                    
+
+                    <div class="card mt-5">
+                        <div class="card-body">
+                            <table class="table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tipo de Vehículo</th>
+                                        <th>Precio Mañana</th>
+                                        <th>Precio Tarde</th>
+                                        <th>Precio Noche</th>
+                                        <th>Precio Día Completo</th>
+                                        <th>Precio de Lavado</th>
+                                        <th>Precio de Cochera</th>
+                                        <th>Acciones</th> <!-- Nueva columna para acciones -->
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for tarifa in tarifas %}
+                                    <tr>
+                                        <td>{{ tarifa.tipo_vehiculo }}</td>
+                                        <td>{{ tarifa.precio_manana }}</td>
+                                        <td>{{ tarifa.precio_tarde }}</td>
+                                        <td>{{ tarifa.precio_noche }}</td>
+                                        <td>{{ tarifa.precio_dia_completo }}</td>
+                                        <td>{{ tarifa.precio_lavado }}</td>
+                                        <td>{{ tarifa.precio_cochera }}</td>
+
+                                        <td>
+                                            <!-- Enlace para editar -->
+                                            <a href="{% url 'editar_tarifa_vehiculo' tarifa.id %}" class="btn btn-sm btn-primary">Editar</a>
+                                            <!-- Enlace para eliminar -->
+                                            <a href="{% url 'eliminar_tarifa_vehiculo' tarifa.id %}" class="btn btn-danger">Eliminar</a>
+                                        </td>
+
+                                        {% comment %} <td>
+                                            <!-- Enlace para editar la tarifa -->
+                                            <a href="{% url 'tarifavehiculos' tarifa.id %}">Editar</a>
+                                            <!-- Agrega un formulario oculto para eliminar la tarifa -->
+                                            <form method="post" action="{% url 'eliminar_tarifa' tarifa.id %}" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-link">Eliminar</button>
+                                            </form>
+                                        </td> {% endcomment %}
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <p > El cambio de Tickets no afectará a los tickets abiertos con anterioridad.  </p>
+                  
+
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    </main>
+
+</body>
+</html> 
