@@ -9,6 +9,8 @@ from django.shortcuts import render
 import requests
 from django.http import JsonResponse
 from tarifas_vehiculos.models import TarifaVehiculo
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 
 def lavado_view(request):
@@ -26,10 +28,39 @@ def lavado_view(request):
     return render(request, 'lavanderia/registrarLavanderia.html', {'form': form, 'tipos_vehiculo': tipos_vehiculo})
 
 
-def historial_lavanderia(request):
-    lavanderias = Lavanderia.objects.all()
-    return render(request, 'lavanderia/historialLavanderia.html', {'lavanderias': lavanderias})
+# def historial_lavanderia(request):
+#     lavanderias = Lavanderia.objects.all()
+#     return render(request, 'lavanderia/historialLavanderia.html', {'lavanderias': lavanderias})
 
+# from django.shortcuts import render
+# from .models import Lavanderia
+
+def historial_lavanderia(request):
+    query = request.GET.get('q')
+
+    lavanderias = Lavanderia.objects.filter(lavadero=True)
+
+    total_registros = lavanderias.count()
+
+    if query:
+        lavanderias = lavanderias.filter(
+            Q(conductor__nombres__icontains=query) |
+            Q(conductor__apellidos__icontains=query) |
+            Q(vehiculo__placa__icontains=query) |
+            Q(tipo_vehiculo__icontains=query) 
+    )
+        
+    paginator = Paginator(lavanderias, 10) 
+
+    page_number = request.GET.get('page')
+    try:
+        lavanderias = paginator.page(page_number)
+    except PageNotAnInteger:
+        lavanderias = paginator.page(1)
+    except EmptyPage:
+        lavanderias = paginator.page(paginator.num_pages)
+
+    return render(request, 'lavanderia/historialLavanderia.html', {'lavanderias': lavanderias , 'total_registros': total_registros})
 
 @csrf_exempt
 def obtener_nombres_apellidos_por_dni(request):
@@ -48,7 +79,6 @@ def obtener_nombres_apellidos_por_dni(request):
             return JsonResponse({'error': 'Error al obtener nombres y apellidos del DNI'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-
 
 def registro_lavanderia(request):
     tipos_vehiculo = TarifaVehiculo.objects.values_list(
