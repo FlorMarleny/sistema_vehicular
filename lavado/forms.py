@@ -1,7 +1,18 @@
-# lavado/forms.py
-
 from django import forms
+from .models import Lavanderia, Conductor, Vehiculo  
+class LavanderiaForm(forms.ModelForm):
+    class Meta:
+        model = Lavanderia
+        fields = ['conductor', 'vehiculo', 'lavadero', 'cochera', 'tipo_vehiculo', 'tiempo', 'precio']
+        exclude = ['conductor', 'vehiculo'] 
+     
+class ConductorForm(forms.ModelForm):
+    class Meta:
+        model = Conductor
+        fields = ['dni', 'nombres', 'apellidos', 'telefono', 'correo']
 
-class LavanderiaForm(forms.Form):
-    # Define los campos de tu formulario aquí
-    dni = forms.CharField(max_length=8)
+class VehiculoForm(forms.ModelForm):
+    class Meta:
+        model = Vehiculo
+        fields = ['placa', 'modelo', 'marca', 'matricula', 'color', 'serie', 'propietario']
+        

@@ -1,155 +1,109 @@
-from django.shortcuts import render
-from django.shortcuts import render
-from django.shortcuts import render
-from .models import Lavanderia
-import requests
-from .utils import ReniecAPI
-import json
-from django.conf import settings
-from django.http import JsonResponse
-
-
-
-# views.py
-
-import requests
-from django.shortcuts import render
-from .models import Lavanderia
+from .forms import LavanderiaForm, ConductorForm, VehiculoForm
+from .models import Lavanderia, Conductor, Vehiculo
+from django.shortcuts import render, redirect
+from django.http import HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 from .forms import LavanderiaForm
-
-def registro_lavanderia(request):
-    if request.method == 'POST':
-        form = LavanderiaForm(request.POST)
-        if form.is_valid():
-            dni = form.cleaned_data['dni']
-            nombres, apellidos = obtener_nombres_apellidos(dni)
-            if nombres and apellidos:
-                lavanderia = form.save(commit=False)
-                lavanderia.nombres = nombres
-                lavanderia.apellidos = apellidos
-                lavanderia.save()
-                return render(request, 'lavanderia/historialLavanderia.html')
-            else:
-                form.add_error('dni', 'No se encontraron datos para el DNI proporcionado')
-    else:
-        form = LavanderiaForm()
-    return render(request, 'lavanderia/registrarLavanderia.html', {'form': form})
-
-def obtener_nombres_apellidos(dni):
-    headers = {'Authorization': 'Bearer apis-token-8038.WNWC8hV6ZnDUe2Ku3YF1Z8xVmBo1xscp'}
-    response = requests.get(f'https://api.apis.net.pe/v1/dni/{dni}', headers=headers)
-    if response.status_code == 200:
-        data = response.json().get('data')
-        nombres = data.get('nombres')
-        apellido_paterno = data.get('apellidoPaterno')
-        apellido_materno = data.get('apellidoMaterno')
-        apellidos = f'{apellido_paterno} {apellido_materno}'
-        return nombres, apellidos
-    else:
-        return None, None
-
-
-
-
-
-# def registro_lavanderia(request):
-#     if request.method == 'POST':
-#         dni = request.POST.get('dni_ruc')  # Obtener el DNI ingresado por el usuario
-#         print("DNI ingresado:", dni)  # Imprimir el DNI para verificar en la consola del servidor
-
-#         # Hacer una solicitud a la API con el DNI
-#         token = 'apis-token-8037.TsFMsaTEN8z-52LaXTxahFrZW-GTTLqz'  # Tu token aquí
-#         url = f'https://api.reniec.com/dni/{dni}'
-#         headers = {'Authorization': f'Token {token}'}
-        
-#         try:
-#             response = requests.get(url, headers=headers)
-#             data = response.json()
-#             print("Datos de la API:", data)  # Imprimir los datos de la API para verificar en la consola del servidor
-            
-#             # Verificar si se recibieron los datos correctamente
-#             if response.status_code == 200:
-#                 nombres = data.get('nombres', '')
-#                 apellidos = data.get('apellidos', '')
-#                 print("Nombres:", nombres)
-#                 print("Apellidos:", apellidos)
-#             else:
-#                 print("Error al obtener los datos de la API")
-#         except Exception as e:
-#             print("Error al hacer la solicitud a la API:", e)
-
-#     return render(request, 'lavanderia/registrarLavanderia.html')
-
-
-
-
-def reniec_api(request):
-
-    if request.method == 'POST':
-
-        reniec_api = ReniecAPI(token=settings.TOKEN_RENIEC)
-
-        # Request JSON
-        data = json.loads(request.body.decode('utf-8'))
-        dni = data.get('dni', '')
-
-        try:
-            person_info = reniec_api.get_person(dni)
-
-            if person_info:
-                return JsonResponse(person_info)
-            else:
-                return JsonResponse({'error': 'No se encontraron datos para el DNI proporcionado.'}, status=404)
-
-        except Exception as e:
-            return JsonResponse({'error': f'Error al consultar la API de reniec/dni: {str(e)}'}, status=500)
-
-
-
-
-
-
-
+from .models import Lavanderia
+from django.shortcuts import render
+import requests
+from django.http import JsonResponse
+from tarifas_vehiculos.models import TarifaVehiculo
 
 
 def lavado_view(request):
     if request.method == 'POST':
         form = LavanderiaForm(request.POST)
         if form.is_valid():
-            # Procesa los datos del formulario aquí
             dni = form.cleaned_data['dni']
-            # Resto del código para manejar el formulario...
     else:
         form = LavanderiaForm()
-    return render(request, 'lavanderia/registrarLavanderia.html' , {'form': form})
 
+    tipos_vehiculo = TarifaVehiculo.objects.values_list(
+        'tipo_vehiculo', flat=True).distinct()
+    print("Tipos de vehículo:", tipos_vehiculo)
 
-from django.shortcuts import render
-from .models import Lavanderia
+    return render(request, 'lavanderia/registrarLavanderia.html', {'form': form, 'tipos_vehiculo': tipos_vehiculo})
+
 
 def historial_lavanderia(request):
     lavanderias = Lavanderia.objects.all()
     return render(request, 'lavanderia/historialLavanderia.html', {'lavanderias': lavanderias})
 
 
-
-def obtener_datos_persona(dni, token):
-    # Realizar una solicitud a la API para obtener los datos de la persona
-    url = f'https://api.reniec.com/dni/{dni}'
-    headers = {'Authorization': f'Token {token}'}
-    response = requests.get(url, headers=headers)
-
-    # Manejar la respuesta de la API
-    if response.status_code == 200:
-        data = response.json()
-        nombres = data.get('nombres')
-        apellidos = data.get('apellidos')
-        return nombres, apellidos
+@csrf_exempt
+def obtener_nombres_apellidos_por_dni(request):
+    if request.method == 'POST':
+        numero_dni = request.POST.get('dni')
+        token = "apis-token-8038.WNWC8hV6ZnDUe2Ku3YF1Z8xVmBo1xscp"
+        url = f"https://api.apis.net.pe/v2/reniec/dni?numero={numero_dni}"
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            nombres = data.get('nombres')
+            apellidos = f"{data.get('apellidoPaterno')} {data.get('apellidoMaterno')}"
+            return JsonResponse({'nombres': nombres, 'apellidos': apellidos})
+        else:
+            return JsonResponse({'error': 'Error al obtener nombres y apellidos del DNI'}, status=400)
     else:
-        print(f"Error al obtener los datos de la API: {response.status_code}")
-
-        return None, None
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
+def registro_lavanderia(request):
+    tipos_vehiculo = TarifaVehiculo.objects.values_list(
+        'tipo_vehiculo', flat=True).distinct()
+
+    if request.method == 'POST':
+        lavanderia_form = LavanderiaForm(request.POST)
+        conductor_form = ConductorForm(request.POST)
+        vehiculo_form = VehiculoForm(request.POST)
+        if lavanderia_form.is_valid() and conductor_form.is_valid() and vehiculo_form.is_valid():
+            # Guardar los datos del conductor
+            conductor = conductor_form.save()
+            # Guardar los datos del vehículo
+            vehiculo = vehiculo_form.save()
+            # Guardar los datos de la lavandería
+            lavanderia = lavanderia_form.save(commit=False)
+            lavanderia.conductor = conductor
+            lavanderia.vehiculo = vehiculo
+            lavanderia.save()
+            # Redirigir a la página de éxito
+            # Ajusta según sea necesario
+            return redirect('lavanderia/registrarLavanderia.html')
+    else:
+        lavanderia_form = LavanderiaForm()
+        conductor_form = ConductorForm()
+        vehiculo_form = VehiculoForm()
+
+    return render(request, 'lavanderia/registrarLavanderia.html', {
+        'lavanderia_form': lavanderia_form,
+        'conductor_form': conductor_form,
+        'vehiculo_form': vehiculo_form,
+        'tipos_vehiculo': tipos_vehiculo
+    })
 
 
+def obtener_precio(request):
+    if request.method == 'POST':
+        tipo_vehiculo = request.POST.get('tipo_vehiculo')
+        tiempo = request.POST.get('tiempo')
+
+        if tiempo == 'manana':
+            precio = TarifaVehiculo.objects.filter(
+                tipo_vehiculo=tipo_vehiculo).values_list('precio_manana', flat=True).first()
+        elif tiempo == 'tarde':
+            precio = TarifaVehiculo.objects.filter(
+                tipo_vehiculo=tipo_vehiculo).values_list('precio_tarde', flat=True).first()
+        elif tiempo == 'noche':
+            precio = TarifaVehiculo.objects.filter(
+                tipo_vehiculo=tipo_vehiculo).values_list('precio_noche', flat=True).first()
+        elif tiempo == 'dia_completo':
+            precio = TarifaVehiculo.objects.filter(
+                tipo_vehiculo=tipo_vehiculo).values_list('precio_dia_completo', flat=True).first()
+        else:
+            return JsonResponse({'error': 'Tiempo no válido'}, status=400)
+
+        return JsonResponse({'precio': precio})
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)

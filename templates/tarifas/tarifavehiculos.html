@@ -131,7 +131,7 @@
 
                                         <td>
                                             <!-- Enlace para editar -->
-                                            <a href="{% url 'editar_tarifa_vehiculo' tarifa.id %}" class="btn btn-sm btn-primary">Editar</a>
+                                            {% comment %} <a href="{% url 'editar_tarifa_vehiculo' tarifa.id %}" class="btn btn-sm btn-primary">Editar</a> {% endcomment %}
                                             <!-- Enlace para eliminar -->
                                             <a href="{% url 'eliminar_tarifa_vehiculo' tarifa.id %}" class="btn btn-danger">Eliminar</a>
                                         </td>

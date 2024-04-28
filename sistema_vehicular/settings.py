@@ -111,3 +111,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # API 
 TOKEN_RENIEC = "apis-token-8038.WNWC8hV6ZnDUe2Ku3YF1Z8xVmBo1xscp"
+RENIEC_API_TOKEN = "apis-token-8038.WNWC8hV6ZnDUe2Ku3YF1Z8xVmBo1xscp"

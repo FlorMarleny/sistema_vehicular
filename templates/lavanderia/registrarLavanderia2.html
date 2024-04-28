@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario</title>
+  <!-- Incluye Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Card con formulario -->
+      <div class="card">
+        <div class="card-header">
+          Formulario de Datos
+        </div>
+        <div class="card-body">
+
+          <form id="formularioDatos">
+            <div class="row">
+
+              <!-- Datos del Conductor -->
+              <div class="col-md-6 border-right">
+                <h5 class="card-title">Datos del Conductor</h5>
+                <div class="form-group">
+                  <label for="dniConductor">DNI</label>
+                  <input type="text" class="form-control" id="dniConductor" placeholder="Ingrese el DNI del conductor">
+                </div>
+                <div class="form-group">
+                  <label for="nombreConductor">Nombres</label>
+                  <input type="text" class="form-control" id="nombreConductor" placeholder="Ingrese los nombres del conductor">
+                </div>
+                <div class="form-group">
+                  <label for="apellidoConductor">Apellidos</label>
+                  <input type="text" class="form-control" id="apellidoConductor" placeholder="Ingrese los apellidos del conductor">
+                </div>
+                <div class="form-group">
+                  <label for="telefonoConductor">Teléfono</label>
+                  <input type="text" class="form-control" id="telefonoConductor" placeholder="Ingrese el teléfono del conductor">
+                </div>
+                <div class="form-group">
+                  <label for="emailConductor">Email</label>
+                  <input type="email" class="form-control" id="emailConductor" placeholder="Ingrese el email del conductor">
+                </div>
+              </div>
+
+              <!-- Datos del Vehículo y Propietario -->
+              <div class="col-md-6">
+                <h5 class="card-title">Datos del Vehículo</h5>
+                <div class="form-group">
+                  <label for="placa">Placa</label>
+                  <input type="text" class="form-control" id="placa" placeholder="Ingrese la placa del vehículo">
+                </div>
+                <div class="form-group">
+                  <label for="modelo">Modelo</label>
+                  <input type="text" class="form-control" id="modelo" placeholder="Ingrese el modelo del vehículo">
+                </div>
+                <div class="form-group">
+                  <label for="marca">Marca</label>
+                  <input type="text" class="form-control" id="marca" placeholder="Ingrese la marca del vehículo">
+                </div>
+                <div class="form-group">
+                  <label for="matricula">Matrícula</label>
+                  <input type="text" class="form-control" id="matricula" placeholder="Ingrese la matrícula del vehículo">
+                </div>
+                <div class="form-group">
+                  <label for="color">Color</label>
+                  <input type="text" class="form-control" id="color" placeholder="Ingrese el color del vehículo">
+                </div>
+                <div class="form-group">
+                  <label for="serie">Serie</label>
+                  <input type="text" class="form-control" id="serie" placeholder="Ingrese la serie del vehículo">
+                </div>
+                <h5 class="card-title mt-4">Datos del Propietario</h5>
+                <div class="form-group">
+                  <label for="dniPropietario">DNI</label>
+                  <input type="text" class="form-control" id="dniPropietario" placeholder="Ingrese el DNI del propietario">
+                </div>
+                <div class="form-group">
+                  <label for="nombrePropietario">Nombres</label>
+                  <input type="text" class="form-control" id="nombrePropietario" placeholder="Nombres del propietario" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="apellidoPropietario">Apellidos</label>
+                  <input type="text" class="form-control" id="apellidoPropietario" placeholder="Apellidos del propietario" readonly>
+                </div>
+              </div>
+
+            </div>
+            <!-- Botón de enviar -->
+            <button type="submit" class="btn btn-primary mt-3">Guardar Datos</button>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Incluye Bootstrap JS (opcional, si se requiere funcionalidad adicional de Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+  // Manejar el evento de cambio en el campo DNI del propietario
+  document.getElementById('dniPropietario').addEventListener('change', function() {
+    // Obtener el valor del DNI ingresado
+    var dniPropietario = this.value;
+    
+    // Realizar la solicitud al API para obtener los nombres y apellidos
+    fetch('https://api.apis.net.pe/v2/reniec/dni?numero=' + dniPropietario)
+      .then(response => response.json())
+      .then(data => {
+        // Verificar si se obtuvieron los datos correctamente
+        if (data.success) {
+          // Asignar los nombres y apellidos al formulario
+          document.getElementById('nombrePropietario').value = data.result.nombres;
+          document.getElementById('apellidoPropietario').value = data.result.apellido_paterno + ' ' + data.result.apellido_materno;
+        } else {
+          alert('No se pudo obtener la información del propietario. Intente nuevamente.');
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener la información del propietario:', error);
+        alert('Ocurrió un error al obtener la información del propietario. Por favor, inténtelo nuevamente.');
+      });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
