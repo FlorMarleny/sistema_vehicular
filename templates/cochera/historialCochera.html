@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Lavandería</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="container">
+            <div class="row justify-content-center">
+
+                    <div class="row w-100">
+                        <div class="col-md-6">
+                            <h4 class="mt-5 mb-3">HISTORIAL DE REGISTRO DE ESTACIONAMIENTO</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="container mt-5 mb-3 ">
+                                <form method="GET" action="{% url 'historial_lavanderia' %}" class="form-inline my-2 my-lg-0 justify-content-end">
+                                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar" name="q">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Placa</th>
+                                    <th>Vehículo</th>
+                                    <th>DNI</th>
+                                    <th>Conductor</th>
+                                    <th>Precio</th>
+                                    {% comment %} <th>Fecha de Ingreso</th>
+                                    <th>Fecha de Salida</th> {% endcomment %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lavanderia in lavanderias %}
+                                <tr>
+                                    <td>{{ lavanderia.vehiculo.placa }}</td>
+                                    <td>{{ lavanderia.tipo_vehiculo }}</td>
+                                    <td>{{ lavanderia.conductor.dni }}</td>
+                                    <td>{{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</td>
+                                    <td>{{ lavanderia.precio }}</td>
+                                    {% comment %} <td>{{ lavanderia.fecha_ingreso }}</td>
+                                    <td>{{ lavanderia.fecha_salida }}</td> {% endcomment %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+
+                        <div class="container mt-3 mb-3 d-flex justify-content-between">
+                            
+                            <div class="mb-3 ">
+                                <p>{{ lavanderias|length }} registros mostrados de {{ total_registros }} totales</p>
+                            </div>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    {% if lavanderias.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ lavanderias.previous_page_number }}">Anterior</a></li>
+                                    {% endif %}
+                                    {% for num in lavanderias.paginator.page_range %}
+                                    {% if lavanderias.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }} <span class="sr-only">(current)</span></span></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if lavanderias.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ lavanderias.next_page_number }}">Siguiente</a></li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ lavanderias.paginator.num_pages }}">Última</a></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+
+                        </div>
+
+
+
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

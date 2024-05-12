@@ -10,7 +10,7 @@ def registrar_tarifa_vehiculo(request):
         form = TarifaVehiculoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('lista_tarifas')
+            return redirect('registrar_tarifa_vehiculo')
     else:
         form = TarifaVehiculoForm()
 
@@ -26,7 +26,6 @@ def lista_tarifas(request):
         query = form.cleaned_data['q']
         if query:
             tarifas = tarifas.filter(tipo_vehiculo__icontains=query)
-
     return render(request, 'tarifas/tarifavehiculos.html', {'tarifas': tarifas, 'form': form})
 
 
@@ -36,7 +35,7 @@ def editar_tarifa_vehiculo(request, id):
         form = TarifaVehiculoForm(request.POST, instance=tarifa)
         if form.is_valid():
             form.save()
-            return redirect('lista_tarifas')
+            return redirect('registrar_tarifa_vehiculo')
     else:
         form = TarifaVehiculoForm(instance=tarifa)
     return render(request, 'editar_tarifa.html', {'form': form})
@@ -45,14 +44,4 @@ def editar_tarifa_vehiculo(request, id):
 def eliminar_tarifa_vehiculo(request, id):
     tarifa = get_object_or_404(TarifaVehiculo, id=id)
     tarifa.delete()
-    return redirect('lista_tarifas')
-
-
-# Create your views here.
-# from django.shortcuts import render
-# from .models import TarifaVehiculo
-
-# def lista_tarifas(request):
-
-#     tarifas = TarifaVehiculo.objects.all()
-#     return render(request, 'tarifas/tarifavehiculos.html', {'tarifas': tarifas})
+    return redirect('registrar_tarifa_vehiculo')

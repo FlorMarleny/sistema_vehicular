@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Lavandería</title>
+    <title>Editar Registro </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -15,106 +15,6 @@
     <link rel="stylesheet" href="{% static 'css/registro.css' %}">
     <script src="{% static 'js/registro.js' %}"></script>
 
-    {% comment %} <script>
-        $(document).ready(function() {
-            $('#id_tipo_vehiculo, #id_tiempo').change(function() {
-                var tipoVehiculo = $('#id_tipo_vehiculo').val();
-                var tiempoSeleccionado = $('#id_tiempo').val();
-    
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "obtener_precio" %}',
-                    data: {
-                        'tipo_vehiculo': tipoVehiculo,
-                        'tiempo': tiempoSeleccionado,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        var precio;
-                        switch(tiempoSeleccionado) {
-                            case 'manana':
-                                precio = response.precio.precio_manana;
-                                break;
-                            case 'tarde':
-                                precio = response.precio.precio_tarde;
-                                break;
-                            case 'noche':
-                                precio = response.precio.precio_noche;
-                                break;
-                            case 'dia_completo':
-                                precio = response.precio.precio_dia_completo;
-                                break;
-                            default:
-                                precio = 'Precio no disponible';
-                        }
-                        console.log("Precio recibido:", precio);
-                        $('#id_precio').val(precio);
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log('Error al obtener el precio:', errorThrown);
-                    }
-                });
-            });
-        });
-    </script> {% endcomment %}
-   
-    {% comment %} <style>
-        /* Estilos para el formulario */
-        .form-container {
-            max-width: auto;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-        }
-
-        /* Estilos para los campos */
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-check-input {
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-
-        /* Estilos para el botón */
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-    </style> {% endcomment %}
-
 </head>
 <body>
     {% include 'layouts/navbar.html' %}
@@ -122,7 +22,7 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h5 class="card-title mt-3 mb-3">REGISTRO</h5>
+        <h5 class="card-title mt-3 mb-3">EDITAR REGISTRO</h5>
 
         <div class="form-container">
                         
@@ -135,15 +35,15 @@
 
                         <div class="form-group">
                             <label for="dni">DNI:</label>
-                            <input type="text" class="form-control" id="dni" name="dni" maxlength="8">
+                            <input type="text" class="form-control" id="dni" name="dni" maxlength="8" value="{{ lavanderia.conductor.dni }}">
                         </div>
                         <div class="form-group">
                             <label for="nombres">Nombres:</label>
-                            <input type="text" class="form-control" id="nombres" name="nombres" readonly>
+                            <input type="text" class="form-control" id="nombres" name="nombres" readonly value="{{ lavanderia.conductor.nombres }}">
                         </div>
                         <div class="form-group">
                             <label for="apellidos">Apellidos:</label>
-                            <input type="text" class="form-control" id="apellidos" name="apellidos" readonly>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" readonly value="{{ lavanderia.conductor.apellidos }}">
                         </div>
 
                   
@@ -151,11 +51,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_telefono">Teléfono:</label>
-                                {{ conductor_form.telefono }}
+                                <input type="text" class="form-control" id="id_telefono" name="telefono" value="{{ lavanderia.conductor.telefono }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="id_correo">Correo Electrónico:</label>
-                                {{ conductor_form.correo }}
+                                <input type="email" class="form-control" id="id_correo" name="correo" value="{{ lavanderia.conductor.correo }}">
                             </div>
                         </div>
 
@@ -167,39 +67,39 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_placa">Placa:</label>
-                                {{ vehiculo_form.placa }}
+                                <input type="text" class="form-control" id="id_placa" name="placa" value="{{ lavanderia.vehiculo.placa }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="id_modelo">Modelo:</label>
-                                {{ vehiculo_form.modelo }}
+                                <input type="text" class="form-control" id="id_modelo" name="modelo" value="{{ lavanderia.vehiculo.modelo }}">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_marca">Marca:</label>
-                                {{ vehiculo_form.marca }}
+                                <input type="text" class="form-control" id="id_marca" name="marca" value="{{ lavanderia.vehiculo.marca }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="id_matricula">Matrícula:</label>
-                                {{ vehiculo_form.matricula }}
+                                <input type="text" class="form-control" id="id_matricula" name="matricula" value="{{ lavanderia.vehiculo.matricula }}">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_color">Color:</label>
-                                {{ vehiculo_form.color }}
+                                <input type="text" class="form-control" id="id_color" name="color" value="{{ lavanderia.vehiculo.color }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="id_serie">Serie:</label>
-                                {{ vehiculo_form.serie }}
+                                <input type="text" class="form-control" id="id_serie" name="serie" value="{{ lavanderia.vehiculo.serie }}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="id_propietario">Propietario:</label>
-                            {{ vehiculo_form.propietario }}
+                            <input type="text" class="form-control" id="id_propietario" name="propietario" value="{{ lavanderia.vehiculo.propietario }}">
                         </div>
                     </div>
 
@@ -209,47 +109,40 @@
                 
                  <div class="row " style="margin-left: 10px;">
                     <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero">
+                        <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero" {% if lavanderia.lavadero %}checked{% endif %}>
                         <label class="form-check-label" for="id_lavadero">Lavadero</label>
                     </div>
                     <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
+                        <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera" {% if lavanderia.cochera %}checked{% endif %}>
                         <label class="form-check-label" for="id_cochera">Cochera</label>
                     </div>
                 </div>
 
                 <div class="row">
 
-               
-
                     <div class="form-group col-md-2">
                         <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
                         <select class="form-control" id="id_tipo_vehiculo" name="tipo_vehiculo">
-                            {% for tipo in tipos_vehiculo %}
-                                <option value="{{ tipo }}">{{ tipo }}</option>
-                            {% endfor %}
+                            <option value="{{ tipo_vehiculo }}">{{ tipo_vehiculo }}</option>
                         </select>
                     </div>
+                    
+                    
 
                     <div class="form-group col-md-2">
                         <label for="id_tiempo">Tiempo:</label>
                         <select class="form-control" id="id_tiempo" name="tiempo">
-                            <option value="manana">Mañana</option>
-                            <option value="tarde">Tarde</option>
-                            <option value="noche">Noche</option>
-                            <option value="dia_completo">Día Completo</option>
+                            <option value="manana" {% if lavanderia.tiempo == 'manana' %}selected{% endif %}>Mañana</option>
+                            <option value="tarde" {% if lavanderia.tiempo == 'tarde' %}selected{% endif %}>Tarde</option>
+                            <option value="noche" {% if lavanderia.tiempo == 'noche' %}selected{% endif %}>Noche</option>
+                            <option value="dia_completo" {% if lavanderia.tiempo == 'dia_completo' %}selected{% endif %}>Día Completo</option>            
                         </select>
                     </div>
-                    
-             
-
 
                     <div class="form-group col-md-2">
                         <label for="id_precio">Precio:</label>
-                        {{ lavanderia_form.precio }}
+                        <input type="text" class="form-control" id="id_precio" name="precio" value="{{ lavanderia.precio }}">
                     </div>
-
-                    <!-- Botón de enviar -->
 
                     <div class="form-group col-md-6 text-right " >
                         <button type="submit" class="btn-submit">Registrar</button>
@@ -263,35 +156,6 @@
             </form> 
         </div>
 
-
-{% comment %} 
-    <script>
-        $(document).ready(function(){
-            $('#dni').on('input', function(){
-                var dni = $(this).val();
-                if (dni.length === 8) {
-                    $.ajax({
-                        url: '{% url "obtener_nombres_apellidos" %}',
-                        method: 'POST',
-                        data: {
-                            'dni': dni,
-                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                        },
-                        success: function(response){
-                            $('#nombres').val(response.nombres);
-                            $('#apellidos').val(response.apellidos);
-                        },
-                        error: function(xhr, errmsg, err){
-                            console.log(xhr.status + ": " + xhr.responseText);
-                        }
-                    });
-                } else {
-                    $('#nombres').val('');
-                    $('#apellidos').val('');
-                }
-            });
-        });
-    </script> {% endcomment %}
 
     </main>
 
@@ -323,8 +187,8 @@
         });
     </script>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html> 
