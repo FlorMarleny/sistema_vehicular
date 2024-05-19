@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -9,112 +8,10 @@
     <title>Registro de Lavandería</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/registro.css' %}">
     <script src="{% static 'js/registro.js' %}"></script>
-
-    {% comment %} <script>
-        $(document).ready(function() {
-            $('#id_tipo_vehiculo, #id_tiempo').change(function() {
-                var tipoVehiculo = $('#id_tipo_vehiculo').val();
-                var tiempoSeleccionado = $('#id_tiempo').val();
-    
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "obtener_precio" %}',
-                    data: {
-                        'tipo_vehiculo': tipoVehiculo,
-                        'tiempo': tiempoSeleccionado,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        var precio;
-                        switch(tiempoSeleccionado) {
-                            case 'manana':
-                                precio = response.precio.precio_manana;
-                                break;
-                            case 'tarde':
-                                precio = response.precio.precio_tarde;
-                                break;
-                            case 'noche':
-                                precio = response.precio.precio_noche;
-                                break;
-                            case 'dia_completo':
-                                precio = response.precio.precio_dia_completo;
-                                break;
-                            default:
-                                precio = 'Precio no disponible';
-                        }
-                        console.log("Precio recibido:", precio);
-                        $('#id_precio').val(precio);
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log('Error al obtener el precio:', errorThrown);
-                    }
-                });
-            });
-        });
-    </script> {% endcomment %}
-   
-    {% comment %} <style>
-        /* Estilos para el formulario */
-        .form-container {
-            max-width: auto;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-        }
-
-        /* Estilos para los campos */
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-check-input {
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-
-        /* Estilos para el botón */
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-    </style> {% endcomment %}
-
 </head>
 <body>
     {% include 'layouts/navbar.html' %}
@@ -220,36 +117,29 @@
 
                 <div class="row">
 
-               
-
-                    <div class="form-group col-md-2">
-                        <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
-                        <select class="form-control" id="id_tipo_vehiculo" name="tipo_vehiculo">
-                            {% for tipo in tipos_vehiculo %}
-                                <option value="{{ tipo }}">{{ tipo }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="form-group col-md-2">
-                        <label for="id_tiempo">Tiempo:</label>
-                        <select class="form-control" id="id_tiempo" name="tiempo">
-                            <option value="manana">Mañana</option>
-                            <option value="tarde">Tarde</option>
-                            <option value="noche">Noche</option>
-                            <option value="dia_completo">Día Completo</option>
-                        </select>
-                    </div>
+                    <label for="tarifa_vehiculo">Tarifa del Vehículo:</label>
+                    <select name="tarifa_vehiculo" id="tarifa_vehiculo" required>
+                        {% for tarifa in tarifas_vehiculo %}
+                            <option value="{{ tarifa.id }}" 
+                                    data-precio-manana="{{ tarifa.precio_manana }}"
+                                    data-precio-tarde="{{ tarifa.precio_tarde }}"
+                                    data-precio-noche="{{ tarifa.precio_noche }}"
+                                    data-precio-dia-completo="{{ tarifa.precio_dia_completo }}">
+                                {{ tarifa.tipo_vehiculo }}
+                            </option>
+                        {% endfor %}
+                    </select>
                     
-             
-
-
-                    <div class="form-group col-md-2">
-                        <label for="id_precio">Precio:</label>
-                        {{ lavanderia_form.precio }}
-                    </div>
-
-                    <!-- Botón de enviar -->
+                
+                    <label for="tiempo">Tiempo del Día:</label>
+                    <select name="tiempo" id="tiempo" required>
+                        <option value="manana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noche">Noche</option>
+                        <option value="dia_completo">Día Completo</option>
+                    </select>
+                    <label for="precio">Precio:</label>
+                    <input type="text" id="precio" name="precio" readonly>
 
                     <div class="form-group col-md-6 text-right " >
                         <button type="submit" class="btn-submit">Registrar</button>
@@ -257,43 +147,56 @@
 
                 </div>
                 
-
-               
-
             </form> 
+
         </div>
 
 
-{% comment %} 
-    <script>
-        $(document).ready(function(){
-            $('#dni').on('input', function(){
-                var dni = $(this).val();
-                if (dni.length === 8) {
-                    $.ajax({
-                        url: '{% url "obtener_nombres_apellidos" %}',
-                        method: 'POST',
-                        data: {
-                            'dni': dni,
-                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                        },
-                        success: function(response){
-                            $('#nombres').val(response.nombres);
-                            $('#apellidos').val(response.apellidos);
-                        },
-                        error: function(xhr, errmsg, err){
-                            console.log(xhr.status + ": " + xhr.responseText);
-                        }
-                    });
-                } else {
-                    $('#nombres').val('');
-                    $('#apellidos').val('');
-                }
-            });
-        });
-    </script> {% endcomment %}
-
     </main>
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tarifaSelect = document.getElementById('tarifa_vehiculo');
+            const tiempoSelect = document.getElementById('tiempo');
+            const precioInput = document.getElementById('precio');
+        
+            // Función para manejar el evento de cambio en los select
+            function handleSelectChange() {
+                const tarifaOption = tarifaSelect.options[tarifaSelect.selectedIndex];
+                const tiempo = tiempoSelect.value;
+        
+                // Obtener el precio correspondiente del elemento seleccionado
+                let precio;
+                switch (tiempo) {
+                    case 'manana':
+                        precio = tarifaOption.dataset.precioManana;
+                        break;
+                    case 'tarde':
+                        precio = tarifaOption.dataset.precioTarde;
+                        break;
+                    case 'noche':
+                        precio = tarifaOption.dataset.precioNoche;
+                        break;
+                    case 'dia_completo':
+                        precio = tarifaOption.dataset.precioDiaCompleto;
+                        break;
+                    default:
+                        precio = 'Error: Tiempo del día inválido';
+                }
+        
+                // Actualizar el campo de precio con el valor obtenido
+                precioInput.value = precio;
+            }
+        
+            // Agregar eventos de cambio a los select
+            tarifaSelect.addEventListener('change', handleSelectChange);
+            tiempoSelect.addEventListener('change', handleSelectChange);
+        });
+            
+    </script>
+    
 
     <script>
         $(document).ready(function(){
@@ -323,8 +226,9 @@
         });
     </script>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html> 
+
+

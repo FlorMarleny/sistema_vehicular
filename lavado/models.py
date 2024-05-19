@@ -1,4 +1,6 @@
 from django.db import models
+from tarifas_vehiculos.models import TarifaVehiculo
+
 
 class Conductor(models.Model):
     dni = models.CharField(max_length=8)
@@ -19,10 +21,10 @@ class Vehiculo(models.Model):
 
 
 class Lavanderia(models.Model):
+    tarifa_vehiculo = models.ForeignKey(TarifaVehiculo, on_delete=models.CASCADE)
     conductor = models.ForeignKey(Conductor, on_delete=models.CASCADE)
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
     lavadero = models.BooleanField(default=False)
     cochera = models.BooleanField(default=False)
-    tipo_vehiculo = models.CharField(max_length=100)  
-    tiempo = models.CharField(max_length=20)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_hora_entrada = models.DateTimeField(auto_now_add=True)
+

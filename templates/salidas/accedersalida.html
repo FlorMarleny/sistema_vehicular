@@ -34,26 +34,17 @@
                         <!-- Conductor -->
                         <div class="col-md-6 border-right">
     
-                            <div class="form-group">
+                            {% comment %} <div class="form-group">
                                 <label for="dni">DNI:</label>
                                  <p class="card-text">{{ lavanderia.conductor.dni }} </p>
-                            </div>
+                            </div> {% endcomment %}
                             
                             <div class="form-group">
-                                <label for="nombres">Nombres y Apellidos:</label>
+                                <label for="nombres">Conductor:</label>
                                 <p class="card-text">{{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</p>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="id_telefono">Teléfono:</label>
-                                    <p class="card-text">{{ lavanderia.conductor.telefono }} </p>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="id_correo">Correo Electrónico:</label>
-                                    <p class="card-text">{{ lavanderia.conductor.correo }} </p>
-                                </div>
-                            </div>
+                           
 
                             <div class="row " style="margin-left: 10px;">
                                 <div class="form-group form-check col-md-2">
@@ -73,76 +64,32 @@
                         <!-- Vehículo -->
                         <div class="col-md-6 border-right">
     
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="id_placa">Placa:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.placa }} </p>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="id_modelo">Modelo:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.modelo }} </p>
-                                </div>
-                            </div>
-    
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="id_marca">Marca:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.marca }} </p>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="id_matricula">Matrícula:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.matricula }} </p>
-                                </div>
-                            </div>
-    
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="id_color">Color:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.color }} </p>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="id_serie">Serie:</label>
-                                    <p class="card-text">{{ lavanderia.vehiculo.serie }} </p>
-                                </div>
-                            </div>
-    
-                            <div class="form-group">
-                                <label for="id_propietario">Propietario:</label>
-                                <p class="card-text">{{ lavanderia.vehiculo.propietario }} </p>
-                            </div>
-
                             <div class="row" style="margin-left: 10px;">
                                 <div class="form-group form-check col-md-6">
                                     <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
                                     <p class="card-text">{{ lavanderia.fecha_hora_entrada }}</p>
                                 </div>
                             </div>
-                            
 
+                            <div class="row" style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-6">
+                                    <label for="id_precio_lavado">Precio por Lavado:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+                                </div>
+                            </div>
 
-
-
+                            <div class="row" style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-6">
+                                    <label for="id_precio_cochera">Precio por Cochera:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_cochera }}</p>
+                                </div>
+                            </div>
 
 
                         </div>
 
-    
                     </div>
     
-                    <!-- Lavandería -->
-{% comment %}                     
-                    <div class="row " style="margin-left: 10px;">
-                        <div class="form-group form-check col-md-2">
-                            <label for="id_lavadero">Lavadero</label>
-                            <p class="card-text">{% if lavanderia.lavadero %}Sí{% else %}No{% endif %}</p>
-                        </div>
-
-                        <div class="form-group form-check col-md-2">
-                            <label for="id_cochera">Cochera</label>
-                            <p class="card-text">{% if lavanderia.cochera %}Sí{% else %}No{% endif %}</p>
-                        </div>
-                    </div>
-     {% endcomment %}
                     <div class="row">
     
                         <div class="form-group col-md-2">
@@ -160,6 +107,22 @@
                             <p class="card-text">{{ lavanderia.precio }} </p>
                         </div>
 
+                        <div class="col-md-6 border-right">
+                            <!-- Otros campos de lavandería -->
+                            <div class="row" style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-6">
+                                    <label for="id_fecha_entrada">Precio por Lavado:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+                                </div>
+                            </div>
+                        
+                            <div class="row" style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-6">
+                                    <label for="id_precio_cochera">Precio por Cochera:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_cochera }}</p>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="form-group col-md-6 text-right " >
                             <button type="submit" class="btn-submit">Ir a Pagar</button>

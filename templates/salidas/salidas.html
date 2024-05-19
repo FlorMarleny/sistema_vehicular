@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Lavandería</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+    {% comment %} <script src="{% static 'js/registro.js' %}"></script> {% endcomment %}
+
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+        <div class="mt-5">
+
+            <form method="GET" action="{% url 'salidas' %}">
+                <label for="numero_dni">Número de DNI:</label>
+                <input type="text" id="numero_dni" name="numero_dni">
+        
+                <!-- Agrega aquí otros campos de búsqueda si los necesitas -->
+        
+                <button type="submit">Buscar</button>
+            </form>
+        
+            <!-- Mostrar los resultados de la búsqueda -->
+            <h5>Resultados de Búsqueda</h5>
+            
+            <!-- Mostrar los resultados de la búsqueda en una tabla con Bootstrap -->
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="bg-info">
+                        <tr>
+                            <th>Conductor</th>
+                            <th>DNI</th>
+                            <th>Vehículo</th>
+                            <th>Placa</th>
+                            <th>Acceder Salida</th> <!-- Columna para el botón -->
+
+                            <!-- Agrega aquí otras columnas si las necesitas -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in resultados %}
+                        <tr>
+                            <td>{{ registro.conductor.nombres }} {{ registro.conductor.apellidos }}</td>
+                            <td>{{ registro.conductor.dni }}</td>
+                            <td>{{ registro.vehiculo.marca }} {{ registro.vehiculo.modelo }}</td>
+                            <td>{{ registro.vehiculo.placa }}</td>
+                            <td>
+                                <a href="{% url 'accedersalida' %}?lavanderia_id={{ registro.id }}" class="btn btn-success btn-sm">Acceder</a>
+                            </td>
+                            {% comment %} <td>
+                                <a href="{% url 'salidas' %}" class="btn btn-success btn-sm">Acceder</a> <!-- Botón dentro de la celda -->
+                            </td> {% endcomment %}
+                            <!-- Agrega aquí otras celdas si las necesitas -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        
+        </div>
+      
+        
+
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> 
