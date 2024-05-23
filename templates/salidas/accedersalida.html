@@ -71,64 +71,53 @@
                         </div>
             
                         <div class="col-md-6 border-right">
-                              
-                            <div class="row" style="margin-left: 10px;">
 
-                                <div class="form-group  col-md-6">
-                                    <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
-                                    <p class="card-text">{{ lavanderia.fecha_hora_entrada }}</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="lavanderia_id" value="{{ lavanderia.id }}">
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6">
+                                        <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
+                                        <p class="card-text">{{ lavanderia.fecha_hora_entrada }}</p>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="id_fecha_entrada">Fecha y Hora de Salida:</label>
+                                        <p id="fecha_hora_salida" class="card-text">{{ lavanderia.fecha_hora_salida|date:"d/m/Y H:i:s" }}</p>
+                                    </div>
                                 </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="id_fecha_entrada">Fecha y Hora de Salida:</label>
-                                    <p id="fecha_hora_salida" class="card-text"> </p>
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6">
+                                        {% if lavanderia.lavadero %}
+                                            <label for="id_precio_laavdo">Precio por Lavado:</label>
+                                            <p class="card-text">S/ {{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {% if lavanderia.cochera %}
+                                            <label for="id_precio_cochera">Precio por Cochera:</label>
+                                            <p class="card-text">S/ {{ lavanderia.precio_cochera }}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-
-                            </div>
-
-                            <div class="row" style="margin-left: 10px;">
-
-                                <div class="form-group  col-md-6">
-                                    {% if lavanderia.lavadero %}
-                                        <label for="id_fecha_entrada">Precio por Lavado:</label>
-                                        <p class="card-text">S/ {{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
-                                    {% endif %}                                
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6 mt-1">
+                                        <label for="efectivo">Efectivo:</label>
+                                        <input type="number" id="efectivo" name="efectivo" class="form-control" required min="0">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="vuelto">Vuelto:</label>
+                                        <input type="text" id="vuelto" name="vuelto" class="form-control" readonly>
+                                        <small id="error-mensaje" class="text-danger"></small>
+                                    </div>
                                 </div>
-
-                                <div class="form-group  col-md-6">
-                                    {% if lavanderia.cochera %}
-                                        <label for="id_precio_cochera">Precio por Cochera:</label>
-                                        <p class="card-text">S/ {{ lavanderia.precio_cochera}}</p>
-                                    {% endif %}
+                                <div class="row" style="margin-left: 10px;">
+                                    <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3>
+                                    <div class="form-group col-md-4 text-right">
+                                        <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
+                                    </div>
                                 </div>
+                            </form>
 
-                            </div>
-
-
-                            <div class="row" style="margin-left: 10px;">
-
-                                
-                                <div class="form-group col-md-6 mt-1">
-                                    <label for="efectivo">Efectivo:</label>
-                                    <input type="number" id="efectivo" name="efectivo" class="form-control" required min="0">
-                                </div>
-
-                                <div class="form-group  col-md-6">
-                                    <label for="vuelto">Vuelto:</label>
-                                    <input type="text" id="vuelto" name="vuelto" class="form-control" readonly>
-                                    <small id="error-mensaje" class="text-danger"></small> 
-                                </div>
-
-                            </div>
-
-                            <div class="row" style="margin-left: 10px;">
-                                <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3>
-
-                                <div class="form-group col-md-4 text-right " >
-                                    <button type="submit" class="btn-submit" id="boton_pagar" >Ir a Pagar</button>
-                                </div>
-                            </div>
-                            
                         </div>
 
                     </div>
@@ -139,17 +128,16 @@
 
     </main>
 
+
     <script>
         function calcularVuelto() {
             var efectivo = parseFloat(document.getElementById('efectivo').value);
-
             if (!isNaN(efectivo) && efectivo >= 0) {
                 var totalAPagar = parseFloat('{{ lavanderia.total_a_pagar }}');
                 var vuelto = efectivo - totalAPagar;
-
                 if (!isNaN(vuelto)) {
                     document.getElementById('vuelto').value = vuelto.toFixed(2);
-                    document.getElementById('error-mensaje').textContent = ''; 
+                    document.getElementById('error-mensaje').textContent = '';
                 } else {
                     document.getElementById('vuelto').value = '';
                     document.getElementById('error-mensaje').textContent = 'Error: ingrese un valor válido';
@@ -159,29 +147,23 @@
                 document.getElementById('error-mensaje').textContent = 'Error: ingrese un número positivo';
             }
         }
-
         document.getElementById('efectivo').addEventListener('input', calcularVuelto);
-    </script>
 
-    <script>
-
-        function actualizarFechaHoraSalida() {
+        
+       function actualizarFechaHoraSalida() {
             var fechaHoraSalidaElemento = document.getElementById('fecha_hora_salida');
-            var fechaHoraSalida = new Date('{{ lavanderia.fecha_hora_salida }}'); 
-            var ahora = new Date(); 
-            var diferencia = ahora.getTime() - fechaHoraSalida.getTime(); 
-            fechaHoraSalida.setMilliseconds(fechaHoraSalida.getMilliseconds() + diferencia); 
-    
-            var fechaFormateada = ('0' + fechaHoraSalida.getDate()).slice(-2) + '/' + ('0' + (fechaHoraSalida.getMonth() + 1)).slice(-2) + '/' + fechaHoraSalida.getFullYear();
-            var horas = fechaHoraSalida.getHours().toString().padStart(2, '0');
-            var minutos = fechaHoraSalida.getMinutes().toString().padStart(2, '0');
-            var segundos = fechaHoraSalida.getSeconds().toString().padStart(2, '0');
+            var ahora = new Date(); // Obtener la fecha y hora actual en JavaScript
+            var fechaFormateada = ('0' + ahora.getDate()).slice(-2) + '/' + ('0' + (ahora.getMonth() + 1)).slice(-2) + '/' + ahora.getFullYear();
+            var horas = ahora.getHours().toString().padStart(2, '0');
+            var minutos = ahora.getMinutes().toString().padStart(2, '0');
+            var segundos = ahora.getSeconds().toString().padStart(2, '0');
             var horaFormateada = horas + ':' + minutos + ':' + segundos;
-    
-            fechaHoraSalidaElemento.textContent = '' + fechaFormateada + ' , ' + horaFormateada;
-        }
-    
+            fechaHoraSalidaElemento.textContent = fechaFormateada + ' , ' + horaFormateada;
+        }    
+
         setInterval(actualizarFechaHoraSalida, 1000);
+       
+
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

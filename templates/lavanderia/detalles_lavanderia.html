@@ -67,7 +67,25 @@
                                 </div>
                             </div>
 
+                            <div class="row">
     
+                                <div class="form-group col-md-4">
+                                    <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.tipo_vehiculo }} </p>
+                                </div>
+                                
+                                <div class="form-group col-md-4">
+                                    <label for="id_tiempo">Tiempo:</label>
+                                    <p class="card-text">{{ lavanderia.tiempo}} </p>
+                                </div>
+            
+                                <div class="form-group col-md-4">
+                                    <label for="id_precio">Precio:</label>
+                                    <p class="card-text">{{ lavanderia.precio_cochera }} </p>
+                                </div>
+            
+                            </div>
+
                         </div>
             
                         <!-- Vehículo -->
@@ -117,62 +135,24 @@
                                     <p class="card-text">{{ lavanderia.fecha_hora_entrada }}</p>
                                 </div>
                             </div>
-                            
 
-
-
-
-
-
-                        </div>
-
+                            <div class="row">
     
-                    </div>
-    
-                    <!-- Lavandería -->
-{% comment %}                     
-                    <div class="row " style="margin-left: 10px;">
-                        <div class="form-group form-check col-md-2">
-                            <label for="id_lavadero">Lavadero</label>
-                            <p class="card-text">{% if lavanderia.lavadero %}Sí{% else %}No{% endif %}</p>
-                        </div>
+                                <div class="form-group col-md-12 text-right " >
+                                    <button type="submit" class="btn-submit">Ir a Pagar</button>
+                                </div>
+                
+                            </div>
 
-                        <div class="form-group form-check col-md-2">
-                            <label for="id_cochera">Cochera</label>
-                            <p class="card-text">{% if lavanderia.cochera %}Sí{% else %}No{% endif %}</p>
                         </div>
-                    </div>
-     {% endcomment %}
-                    <div class="row">
-    
-                        <div class="form-group col-md-2">
-                            <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
-                            <p class="card-text">{{ lavanderia.tipo_vehiculo }} </p>
-                        </div>
-                        
-                        <div class="form-group col-md-2">
-                            <label for="id_tiempo">Tiempo:</label>
-                            <p class="card-text">{{ lavanderia.tiempo}} </p>
-                        </div>
-    
-                        <div class="form-group col-md-2">
-                            <label for="id_precio">Precio:</label>
-                            <p class="card-text">{{ lavanderia.precio }} </p>
-                        </div>
-
-                        
-                        <div class="form-group col-md-6 text-right " >
-                            <button type="submit" class="btn-submit">Ir a Pagar</button>
-                        </div>
-    
+     
                     </div>
                                         
                 </div>
-            </div>
-            
-    
-        </div>
 
+            </div>
+
+        </div>
 
     </main>
 

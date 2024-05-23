@@ -1,6 +1,6 @@
 from django.utils import timezone
 from .models import Lavanderia, Lavanderia, TarifaVehiculo
-from django.http import HttpResponseBadRequest , HttpResponseServerError, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest , HttpResponseServerError, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import LavanderiaForm, ConductorForm, VehiculoForm
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +8,7 @@ import requests
 from tarifas_vehiculos.models import TarifaVehiculo
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.urls import reverse
 
 
 def lavado_view(request):
@@ -209,6 +210,20 @@ def editar_lavanderia(request, id):
                     tarifa_vehiculo = TarifaVehiculo.objects.get(id=tarifa_vehiculo_id)
                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
                     lavanderia.tiempo = tiempo
+                    
+                    
+                        
+                    # Calcular el precio basado en la tarifa seleccionada y el tiempo
+                    if tiempo == 'manana':
+                        lavanderia.precio_cochera = tarifa_vehiculo.precio_manana
+                    elif tiempo == 'tarde':
+                        lavanderia.precio_cochera = tarifa_vehiculo.precio_tarde
+                    elif tiempo == 'noche':
+                        lavanderia.precio_cochera = tarifa_vehiculo.precio_noche
+                    elif tiempo == 'dia_completo':
+                        lavanderia.precio_cochera = tarifa_vehiculo.precio_dia_completo
+                    
+                    
                     lavanderia.total_a_pagar = lavanderia.calcular_total_a_pagar()
                     lavanderia.save()
 
@@ -216,7 +231,6 @@ def editar_lavanderia(request, id):
                 except TarifaVehiculo.DoesNotExist:
                     # Manejar el caso donde la tarifa de vehículo no existe
                     pass
-
     else:
         lavanderia_form = LavanderiaForm(instance=lavanderia)
         conductor_form = ConductorForm(instance=lavanderia.conductor)
@@ -229,6 +243,7 @@ def editar_lavanderia(request, id):
         'vehiculo_form': vehiculo_form,
         'tarifas_vehiculo': tarifas_vehiculo,
     })
+
 
 def detalles_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
@@ -259,42 +274,44 @@ def salidas(request):
     return HttpResponseBadRequest("Método no permitido")
 
 
-# def acceder_salida(request):
-#     if request.method == 'GET':
-#         lavanderia_id = request.GET.get('lavanderia_id')
-#         lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
-
-#         # Procesar el pago si se proporcionan los datos
-#         if 'efectivo' in request.GET and 'vuelto' in request.GET:
-#             efectivo = request.GET.get('efectivo')
-#             vuelto = request.GET.get('vuelto')
-
-#             # Asignar valores de efectivo y vuelto
-#             lavanderia.efectivo = efectivo
-#             lavanderia.vuelto = vuelto
-
-#             # Guardar la instancia de Lavanderia
-#             lavanderia.save()
-
-#             # Redirigir a una página de confirmación u otra vista
-#             return redirect('confirmacion_pago')
-
-#         # Actualizar la hora de salida
-#         lavanderia.fecha_hora_salida = timezone.now().strftime("%Y-%m-%dT%H:%M:%S")  # Formatear la fecha y hora
-#         lavanderia.save()
-
-#         return render(request, 'salidas/accedersalida.html', {'lavanderia': lavanderia})
-#     else:
-#         return HttpResponseBadRequest("La solicitud debe ser GET.")
-
-
 def acceder_salida(request):
     if request.method == 'GET':
         lavanderia_id = request.GET.get('lavanderia_id')
         lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
-        lavanderia.fecha_hora_salida = timezone.now().strftime(
-            "%Y-%m-%dT%H:%M:%S") 
-        lavanderia.save()
+        
         return render(request, 'salidas/accedersalida.html', {'lavanderia': lavanderia})
-    else:
-        return HttpResponseBadRequest("La solicitud debe ser GET.")
+    
+    elif request.method == 'POST':
+        lavanderia_id = request.POST.get('lavanderia_id')
+        lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
+        efectivo = request.POST.get('efectivo')
+        vuelto = request.POST.get('vuelto')
+        
+        try:
+            lavanderia.efectivo = float(efectivo)
+            lavanderia.vuelto = float(vuelto)
+            lavanderia.fecha_hora_salida = timezone.now()
+
+            lavanderia.save()
+            print(lavanderia.fecha_hora_salida)
+
+            return HttpResponseRedirect(reverse('historial_lavanderia'))
+        except ValueError:
+            return HttpResponseBadRequest("Datos inválidos.")
+    
+    return HttpResponseBadRequest("Método no permitido.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

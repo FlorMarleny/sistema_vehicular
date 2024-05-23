@@ -29,7 +29,6 @@
             <form method="post" id="lavanderia-form">
                 {% csrf_token %}
                 
-                
                 <div class="row">
                     <!-- Conductor -->
                     <div class="col-md-6 border-right">
@@ -46,8 +45,6 @@
                             <label for="apellidos">Apellidos:</label>
                             <input type="text" class="form-control" id="apellidos" name="apellidos" readonly value="{{ lavanderia.conductor.apellidos }}">
                         </div>
-
-                  
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
