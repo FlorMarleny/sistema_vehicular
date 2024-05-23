@@ -119,39 +119,47 @@
                     </div>
                 </div>
 
+                             
                 <div class="row">
-
+                    
                     <div class="form-group col-md-2">
-                        <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
-                        <select class="form-control" id="id_tipo_vehiculo" name="tipo_vehiculo">
-                            <option value="{{ tipo_vehiculo }}">{{ tipo_vehiculo }}</option>
+                        <label for="tarifa_vehiculo">Tarifa de Vehículo:</label>
+                        <select id="tarifa_vehiculo" name="tarifa_vehiculo">
+                            {% for tarifa in tarifas_vehiculo %}
+                                <option value="{{ tarifa.id }}"
+                                        data-precioManana="{{ tarifa.precio_manana }}"
+                                        data-precioTarde="{{ tarifa.precio_tarde }}"
+                                        data-precioNoche="{{ tarifa.precio_noche }}"
+                                        data-precioDiaCompleto="{{ tarifa.precio_dia_completo }}"
+                                        {% if tarifa.id == lavanderia.tarifa_vehiculo.id %}selected{% endif %}>
+                                    {{ tarifa.tipo_vehiculo }}
+                                </option>
+                            {% endfor %}
                         </select>
+                        
                     </div>
                     
-                    
-
+            
                     <div class="form-group col-md-2">
-                        <label for="id_tiempo">Tiempo:</label>
-                        <select class="form-control" id="id_tiempo" name="tiempo">
+                        <label for="tiempo">Tiempo:</label>
+                        <select id="tiempo" name="tiempo">
                             <option value="manana" {% if lavanderia.tiempo == 'manana' %}selected{% endif %}>Mañana</option>
                             <option value="tarde" {% if lavanderia.tiempo == 'tarde' %}selected{% endif %}>Tarde</option>
                             <option value="noche" {% if lavanderia.tiempo == 'noche' %}selected{% endif %}>Noche</option>
-                            <option value="dia_completo" {% if lavanderia.tiempo == 'dia_completo' %}selected{% endif %}>Día Completo</option>            
+                            <option value="dia_completo" {% if lavanderia.tiempo == 'dia_completo' %}selected{% endif %}>Día Completo</option>
                         </select>
                     </div>
-
+            
                     <div class="form-group col-md-2">
-                        <label for="id_precio">Precio:</label>
-                        <input type="text" class="form-control" id="id_precio" name="precio" value="{{ lavanderia.precio }}">
+                        <label for="precio">Precio de Cochera:</label>
+                        <!-- El campo de precio debería ser modificable -->
+                        <input type="text" id="precio" name="precio" value="{{ lavanderia.precio_cochera }}">
                     </div>
 
-                    <div class="form-group col-md-6 text-right " >
-                        <button type="submit" class="btn-submit">Registrar</button>
+                    <div class="form-group col-md-6 text-right">
+                        <button type="submit" class="btn-submit">Actualizar</button>
                     </div>
-
                 </div>
-                
-
                
 
             </form> 
@@ -159,6 +167,52 @@
 
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener elementos del DOM
+            const tarifaSelect = document.getElementById('tarifa_vehiculo');
+            const tiempoSelect = document.getElementById('tiempo');
+            const precioInput = document.getElementById('precio');
+    
+            // Función para manejar el evento de cambio en los select
+            function handleSelectChange() {
+                const tarifaOption = tarifaSelect.options[tarifaSelect.selectedIndex];
+                const tiempo = tiempoSelect.value;
+    
+                // Obtener el precio correspondiente del elemento seleccionado
+                let precio;
+                switch (tiempo) {
+                    case 'manana':
+                        precio = tarifaOption.getAttribute('data-precioManana');
+                        break;
+                    case 'tarde':
+                        precio = tarifaOption.getAttribute('data-precioTarde');
+                        break;
+                    case 'noche':
+                        precio = tarifaOption.getAttribute('data-precioNoche');
+                        break;
+                    case 'dia_completo':
+                        precio = tarifaOption.getAttribute('data-precioDiaCompleto');
+                        break;
+                    default:
+                        precio = 'Error: Tiempo del día inválido';
+                }
+    
+                // Actualizar el campo de precio con el valor obtenido
+                // Actualizar el campo de precio con el valor obtenido
+                precioInput.value = precio || 'undefined'; 
+           }
+    
+            // Agregar eventos de cambio a los select
+            tarifaSelect.addEventListener('change', handleSelectChange);
+            tiempoSelect.addEventListener('change', handleSelectChange);
+    
+            // Llamar a la función handleSelectChange inicialmente para establecer el precio
+            handleSelectChange();
+        });
+    </script>
+
 
     <script>
         $(document).ready(function(){

@@ -52,10 +52,10 @@
                                 {% for lavanderia in lavanderias %}
                                 <tr>
                                     <td>{{ lavanderia.vehiculo.placa }}</td>
-                                    <td>{{ lavanderia.tipo_vehiculo }}</td>
+                                    <td>{{ lavanderia.tarifa_vehiculo.tipo_vehiculo }}</td>
                                     <td>{{ lavanderia.conductor.dni }}</td>
                                     <td>{{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</td>
-                                    <td>{{ lavanderia.precio }}</td>
+                                    {% comment %} <td>{{ lavanderia.precio_cochera }}</td> {% endcomment %}
                                     <td>
                                         <!-- Enlaces o botones para las acciones -->
                                         <a href="{% url 'editar_lavanderia' lavanderia.id %}" class="btn btn-primary btn-sm">Editar</a>
