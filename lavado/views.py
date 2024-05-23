@@ -1,6 +1,6 @@
 from django.utils import timezone
 from .models import Lavanderia, Lavanderia, TarifaVehiculo
-from django.http import HttpResponseBadRequest , HttpResponseServerError, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseServerError, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import LavanderiaForm, ConductorForm, VehiculoForm
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +9,6 @@ from tarifas_vehiculos.models import TarifaVehiculo
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.urls import reverse
-
 
 def lavado_view(request):
     if request.method == 'POST':
@@ -25,12 +24,9 @@ def lavado_view(request):
 
     return render(request, 'lavanderia/registrarLavanderia.html', {'form': form, 'tipos_vehiculo': tipos_vehiculo})
 
-
 def historial_lavanderia(request):
     query = request.GET.get('q')
-
     lavanderias = Lavanderia.objects.filter(lavadero=True)
-
     total_registros = lavanderias.count()
 
     if query:
@@ -38,12 +34,13 @@ def historial_lavanderia(request):
             Q(conductor__nombres__icontains=query) |
             Q(conductor__apellidos__icontains=query) |
             Q(vehiculo__placa__icontains=query) |
-            Q(tipo_vehiculo__icontains=query)
+            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query)  # Modificación aquí
         )
 
     paginator = Paginator(lavanderias, 10)
 
     page_number = request.GET.get('page')
+    
     try:
         lavanderias = paginator.page(page_number)
     except PageNotAnInteger:
@@ -52,7 +49,6 @@ def historial_lavanderia(request):
         lavanderias = paginator.page(paginator.num_pages)
 
     return render(request, 'lavanderia/historialLavanderia.html', {'lavanderias': lavanderias, 'total_registros': total_registros})
-
 
 def historial_cochera(request):
     query = request.GET.get('q')
@@ -66,7 +62,7 @@ def historial_cochera(request):
             Q(conductor__nombres__icontains=query) |
             Q(conductor__apellidos__icontains=query) |
             Q(vehiculo__placa__icontains=query) |
-            Q(tipo_vehiculo__icontains=query)
+            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query)  
         )
 
     paginator = Paginator(lavanderias, 10)
@@ -80,7 +76,6 @@ def historial_cochera(request):
         lavanderias = paginator.page(paginator.num_pages)
 
     return render(request, 'cochera/historialCochera.html', {'lavanderias': lavanderias, 'total_registros': total_registros})
-
 
 @csrf_exempt
 def obtener_nombres_apellidos_por_dni(request):
@@ -99,7 +94,6 @@ def obtener_nombres_apellidos_por_dni(request):
             return JsonResponse({'error': 'Error al obtener nombres y apellidos del DNI'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-
 
 def registro_lavanderia(request):
     tarifas_vehiculo = TarifaVehiculo.objects.all()
@@ -121,7 +115,8 @@ def registro_lavanderia(request):
                 tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
                 tiempo = request.POST.get('tiempo')
                 try:
-                    tarifa_vehiculo = TarifaVehiculo.objects.get( id=tarifa_vehiculo_id)
+                    tarifa_vehiculo = TarifaVehiculo.objects.get(
+                        id=tarifa_vehiculo_id)
                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
 
                     if tiempo == 'manana':
@@ -195,8 +190,10 @@ def editar_lavanderia(request, id):
 
     if request.method == 'POST':
         lavanderia_form = LavanderiaForm(request.POST, instance=lavanderia)
-        conductor_form = ConductorForm(request.POST, instance=lavanderia.conductor)
-        vehiculo_form = VehiculoForm(request.POST, instance=lavanderia.vehiculo)
+        conductor_form = ConductorForm(
+            request.POST, instance=lavanderia.conductor)
+        vehiculo_form = VehiculoForm(
+            request.POST, instance=lavanderia.vehiculo)
 
         if lavanderia_form.is_valid() and conductor_form.is_valid() and vehiculo_form.is_valid():
             lavanderia = lavanderia_form.save(commit=False)
@@ -207,12 +204,11 @@ def editar_lavanderia(request, id):
                 tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
                 tiempo = request.POST.get('tiempo')
                 try:
-                    tarifa_vehiculo = TarifaVehiculo.objects.get(id=tarifa_vehiculo_id)
+                    tarifa_vehiculo = TarifaVehiculo.objects.get(
+                        id=tarifa_vehiculo_id)
                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
                     lavanderia.tiempo = tiempo
-                    
-                    
-                        
+
                     # Calcular el precio basado en la tarifa seleccionada y el tiempo
                     if tiempo == 'manana':
                         lavanderia.precio_cochera = tarifa_vehiculo.precio_manana
@@ -222,8 +218,7 @@ def editar_lavanderia(request, id):
                         lavanderia.precio_cochera = tarifa_vehiculo.precio_noche
                     elif tiempo == 'dia_completo':
                         lavanderia.precio_cochera = tarifa_vehiculo.precio_dia_completo
-                    
-                    
+
                     lavanderia.total_a_pagar = lavanderia.calcular_total_a_pagar()
                     lavanderia.save()
 
@@ -244,74 +239,48 @@ def editar_lavanderia(request, id):
         'tarifas_vehiculo': tarifas_vehiculo,
     })
 
-
 def detalles_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
     return render(request, 'lavanderia/detalles_lavanderia.html', {'lavanderia': lavanderia})
-
 
 def eliminar_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
     return render(request, 'lavanderia/eliminar_lavanderia.html', {'lavanderia': lavanderia})
 
-
 def salidas(request):
     if request.method == 'GET':
-        # Obtener el número de DNI del formulario de búsqueda
         numero_dni = request.GET.get('numero_dni', '')
 
         if not numero_dni:
-            # Si no se ingresó ningún número de DNI, renderizar nuevamente el formulario con un mensaje de error
             return render(request, 'salidas/salidas.html', {'error': 'Ingrese un número de DNI para realizar la búsqueda'})
-
-        # Realizar la búsqueda en base al número de DNI
-        resultados = Lavanderia.objects.filter(conductor__dni=numero_dni)
-
-        # Renderizar la plantilla con los resultados de la búsqueda
+        resultados = Lavanderia.objects.filter(conductor__dni=numero_dni).order_by('-fecha_hora_entrada')
         return render(request, 'salidas/salidas.html', {'resultados': resultados})
-
-    # Manejar el caso en que el método de la solicitud no sea GET
+    
     return HttpResponseBadRequest("Método no permitido")
-
 
 def acceder_salida(request):
     if request.method == 'GET':
         lavanderia_id = request.GET.get('lavanderia_id')
         lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
-        
+
         return render(request, 'salidas/accedersalida.html', {'lavanderia': lavanderia})
-    
+
     elif request.method == 'POST':
         lavanderia_id = request.POST.get('lavanderia_id')
         lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
         efectivo = request.POST.get('efectivo')
         vuelto = request.POST.get('vuelto')
-        
+
         try:
             lavanderia.efectivo = float(efectivo)
             lavanderia.vuelto = float(vuelto)
             lavanderia.fecha_hora_salida = timezone.now()
-
+            lavanderia.estado = 'terminada' 
             lavanderia.save()
             print(lavanderia.fecha_hora_salida)
 
             return HttpResponseRedirect(reverse('historial_lavanderia'))
         except ValueError:
             return HttpResponseBadRequest("Datos inválidos.")
-    
+
     return HttpResponseBadRequest("Método no permitido.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

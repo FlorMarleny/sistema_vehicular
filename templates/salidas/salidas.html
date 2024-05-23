@@ -12,8 +12,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/registro.css' %}">
-    {% comment %} <script src="{% static 'js/registro.js' %}"></script> {% endcomment %}
-
 
 </head>
 <body>
@@ -33,10 +31,8 @@
                 <button type="submit">Buscar</button>
             </form>
         
-            <!-- Mostrar los resultados de la búsqueda -->
             <h5>Resultados de Búsqueda</h5>
             
-            <!-- Mostrar los resultados de la búsqueda en una tabla con Bootstrap -->
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead class="bg-info">
@@ -45,9 +41,8 @@
                             <th>DNI</th>
                             <th>Vehículo</th>
                             <th>Placa</th>
-                            <th>Acceder Salida</th> <!-- Columna para el botón -->
+                            <th>Acceder Salida</th>
 
-                            <!-- Agrega aquí otras columnas si las necesitas -->
                         </tr>
                     </thead>
                     <tbody>
@@ -58,12 +53,13 @@
                             <td>{{ registro.vehiculo.marca }} {{ registro.vehiculo.modelo }}</td>
                             <td>{{ registro.vehiculo.placa }}</td>
                             <td>
-                                <a href="{% url 'accedersalida' %}?lavanderia_id={{ registro.id }}" class="btn btn-success btn-sm">Acceder</a>
+                                {% if registro.estado != 'terminada' %}
+                                    <a href="{% url 'accedersalida' %}?lavanderia_id={{ registro.id }}" class="btn btn-success btn-sm">Acceder</a>
+                                {% else %}
+                                    Salida concluida
+                                {% endif %}
                             </td>
-                            {% comment %} <td>
-                                <a href="{% url 'salidas' %}" class="btn btn-success btn-sm">Acceder</a> <!-- Botón dentro de la celda -->
-                            </td> {% endcomment %}
-                            <!-- Agrega aquí otras celdas si las necesitas -->
+
                         </tr>
                         {% endfor %}
                     </tbody>

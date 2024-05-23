@@ -42,10 +42,7 @@
                                     <th>DNI</th>
                                     <th>Conductor</th>
                                     <th>Precio</th>
-                                    <th>Acciones</th>  <!-- Nueva columna para las acciones -->
-
-                                    {% comment %} <th>Fecha de Ingreso</th>
-                                    <th>Fecha de Salida</th> {% endcomment %}
+                                    <th>Acciones</th> 
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,15 +53,19 @@
                                     <td>{{ lavanderia.conductor.dni }}</td>
                                     <td>{{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</td>
                                     <td>{{ lavanderia.tarifa_vehiculo.precio_lavado }}</td> 
-                                    <td>
-                                        <!-- Enlaces o botones para las acciones -->
-                                        <a href="{% url 'editar_lavanderia' lavanderia.id %}" class="btn btn-primary btn-sm">Editar</a>
-                                        <a href="{% url 'detalles_lavanderia' lavanderia.id %}" class="btn btn-info btn-sm">Detalles</a>
-                                        <a href="{% url 'eliminar_lavanderia' lavanderia.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                                    </td>
                                     
-                                    {% comment %} <td>{{ lavanderia.fecha_ingreso }}</td>
-                                    <td>{{ lavanderia.fecha_salida }}</td> {% endcomment %}
+                                    <td>
+                                        {% if lavanderia.estado != 'terminada' %}
+                                            <a href="{% url 'editar_lavanderia' lavanderia.id %}" class="btn btn-primary btn-sm">Editar</a>
+                                            <a href="{% url 'detalles_lavanderia' lavanderia.id %}" class="btn btn-info btn-sm">Detalles</a>
+                                            <a href="{% url 'eliminar_lavanderia' lavanderia.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                        {% else %}
+                                            <button class="btn btn-primary btn-sm" disabled>Editar</button>
+                                            <button class="btn btn-info btn-sm" disabled>Detalles</button>
+                                            <button class="btn btn-danger btn-sm" disabled>Eliminar</button>
+                                        {% endif %}
+                                    </td>
+
                                 </tr>
                                 {% endfor %}
                             </tbody>
