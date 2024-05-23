@@ -14,7 +14,7 @@ class TarifaVehiculo(models.Model):
     precio_noche = models.DecimalField(max_digits=10, decimal_places=2)
     precio_dia_completo = models.DecimalField(max_digits=10, decimal_places=2)
     precio_lavado = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_cochera = models.DecimalField(max_digits=10, decimal_places=2)
+    
 
     def __str__(self):
         return f"{self.tipo_vehiculo} - Precios"

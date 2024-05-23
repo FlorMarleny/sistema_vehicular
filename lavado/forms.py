@@ -1,11 +1,11 @@
 from django import forms
 from .models import Lavanderia, Conductor, Vehiculo
 
-
 class LavanderiaForm(forms.ModelForm):
     class Meta:
         model = Lavanderia
-        fields = ['conductor', 'vehiculo', 'lavadero', 'cochera','tarifa_vehiculo']
+        fields = ['conductor', 'vehiculo', 'lavadero', 'cochera',
+                  'tiempo', 'precio_cochera', 'tarifa_vehiculo']
         exclude = ['conductor', 'vehiculo']
 
 

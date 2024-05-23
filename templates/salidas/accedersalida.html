@@ -5,15 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Lavandería</title>
+    <title>Acceder Salida</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/registro.css' %}">
-    {% comment %} <script src="{% static 'js/registro.js' %}"></script> {% endcomment %}
-
 
 </head>
 <body>
@@ -31,20 +29,18 @@
                     <h5 class="card-title ">REALIZAR PROCESO DE IDENTIFICACIÓN DE LAS ACTIVIDADES</h5>
 
                     <div class="row mt-5">
-                        <!-- Conductor -->
+
                         <div class="col-md-6 border-right">
-    
-                            {% comment %} <div class="form-group">
-                                <label for="dni">DNI:</label>
-                                 <p class="card-text">{{ lavanderia.conductor.dni }} </p>
-                            </div> {% endcomment %}
-                            
+
+                            <div class="form-group">
+                                <label for="nombres">Placa:</label>
+                                <p class="card-text">{{ lavanderia.vehiculo.placa }}</p>
+                            </div>
+                                
                             <div class="form-group">
                                 <label for="nombres">Conductor:</label>
                                 <p class="card-text">{{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</p>
                             </div>
-
-                           
 
                             <div class="row " style="margin-left: 10px;">
                                 <div class="form-group form-check col-md-2">
@@ -58,87 +54,136 @@
                                 </div>
                             </div>
 
+                            <div class="row">
     
+                                <div class="form-group col-md-6">
+                                    <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
+                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.tipo_vehiculo }} </p>
+                                </div>
+                                
+                                <div class="form-group col-md-6">
+                                    <label for="id_tiempo">Tiempo:</label>
+                                    <p class="card-text">{{ lavanderia.tiempo }}</p>
+                                </div>
+            
+                            </div>
+
                         </div>
             
-                        <!-- Vehículo -->
                         <div class="col-md-6 border-right">
-    
+                              
                             <div class="row" style="margin-left: 10px;">
-                                <div class="form-group form-check col-md-6">
+
+                                <div class="form-group  col-md-6">
                                     <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
                                     <p class="card-text">{{ lavanderia.fecha_hora_entrada }}</p>
                                 </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="id_fecha_entrada">Fecha y Hora de Salida:</label>
+                                    <p id="fecha_hora_salida" class="card-text"> </p>
+                                </div>
+
                             </div>
 
                             <div class="row" style="margin-left: 10px;">
-                                <div class="form-group form-check col-md-6">
-                                    <label for="id_precio_lavado">Precio por Lavado:</label>
-                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+
+                                <div class="form-group  col-md-6">
+                                    {% if lavanderia.lavadero %}
+                                        <label for="id_fecha_entrada">Precio por Lavado:</label>
+                                        <p class="card-text">S/ {{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+                                    {% endif %}                                
                                 </div>
+
+                                <div class="form-group  col-md-6">
+                                    {% if lavanderia.cochera %}
+                                        <label for="id_precio_cochera">Precio por Cochera:</label>
+                                        <p class="card-text">S/ {{ lavanderia.precio_cochera}}</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+
+                            <div class="row" style="margin-left: 10px;">
+
+                                
+                                <div class="form-group col-md-6 mt-1">
+                                    <label for="efectivo">Efectivo:</label>
+                                    <input type="number" id="efectivo" name="efectivo" class="form-control" required min="0">
+                                </div>
+
+                                <div class="form-group  col-md-6">
+                                    <label for="vuelto">Vuelto:</label>
+                                    <input type="text" id="vuelto" name="vuelto" class="form-control" readonly>
+                                    <small id="error-mensaje" class="text-danger"></small> 
+                                </div>
+
                             </div>
 
                             <div class="row" style="margin-left: 10px;">
-                                <div class="form-group form-check col-md-6">
-                                    <label for="id_precio_cochera">Precio por Cochera:</label>
-                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_cochera }}</p>
+                                <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3>
+
+                                <div class="form-group col-md-4 text-right " >
+                                    <button type="submit" class="btn-submit" id="boton_pagar" >Ir a Pagar</button>
                                 </div>
                             </div>
-
-
+                            
                         </div>
 
                     </div>
     
-                    <div class="row">
-    
-                        <div class="form-group col-md-2">
-                            <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
-                            <p class="card-text">{{ lavanderia.tipo_vehiculo }} </p>
-                        </div>
-                        
-                        <div class="form-group col-md-2">
-                            <label for="id_tiempo">Tiempo:</label>
-                            <p class="card-text">{{ lavanderia.tiempo}} </p>
-                        </div>
-    
-                        <div class="form-group col-md-2">
-                            <label for="id_precio">Precio:</label>
-                            <p class="card-text">{{ lavanderia.precio }} </p>
-                        </div>
-
-                        <div class="col-md-6 border-right">
-                            <!-- Otros campos de lavandería -->
-                            <div class="row" style="margin-left: 10px;">
-                                <div class="form-group form-check col-md-6">
-                                    <label for="id_fecha_entrada">Precio por Lavado:</label>
-                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
-                                </div>
-                            </div>
-                        
-                            <div class="row" style="margin-left: 10px;">
-                                <div class="form-group form-check col-md-6">
-                                    <label for="id_precio_cochera">Precio por Cochera:</label>
-                                    <p class="card-text">{{ lavanderia.tarifa_vehiculo.precio_cochera }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group col-md-6 text-right " >
-                            <button type="submit" class="btn-submit">Ir a Pagar</button>
-                        </div>
-    
-                    </div>
-                                        
                 </div>
             </div>
-            
-    
         </div>
-
 
     </main>
 
+    <script>
+        function calcularVuelto() {
+            var efectivo = parseFloat(document.getElementById('efectivo').value);
+
+            if (!isNaN(efectivo) && efectivo >= 0) {
+                var totalAPagar = parseFloat('{{ lavanderia.total_a_pagar }}');
+                var vuelto = efectivo - totalAPagar;
+
+                if (!isNaN(vuelto)) {
+                    document.getElementById('vuelto').value = vuelto.toFixed(2);
+                    document.getElementById('error-mensaje').textContent = ''; 
+                } else {
+                    document.getElementById('vuelto').value = '';
+                    document.getElementById('error-mensaje').textContent = 'Error: ingrese un valor válido';
+                }
+            } else {
+                document.getElementById('vuelto').value = '';
+                document.getElementById('error-mensaje').textContent = 'Error: ingrese un número positivo';
+            }
+        }
+
+        document.getElementById('efectivo').addEventListener('input', calcularVuelto);
+    </script>
+
+    <script>
+
+        function actualizarFechaHoraSalida() {
+            var fechaHoraSalidaElemento = document.getElementById('fecha_hora_salida');
+            var fechaHoraSalida = new Date('{{ lavanderia.fecha_hora_salida }}'); 
+            var ahora = new Date(); 
+            var diferencia = ahora.getTime() - fechaHoraSalida.getTime(); 
+            fechaHoraSalida.setMilliseconds(fechaHoraSalida.getMilliseconds() + diferencia); 
+    
+            var fechaFormateada = ('0' + fechaHoraSalida.getDate()).slice(-2) + '/' + ('0' + (fechaHoraSalida.getMonth() + 1)).slice(-2) + '/' + fechaHoraSalida.getFullYear();
+            var horas = fechaHoraSalida.getHours().toString().padStart(2, '0');
+            var minutos = fechaHoraSalida.getMinutes().toString().padStart(2, '0');
+            var segundos = fechaHoraSalida.getSeconds().toString().padStart(2, '0');
+            var horaFormateada = horas + ':' + minutos + ':' + segundos;
+    
+            fechaHoraSalidaElemento.textContent = '' + fechaFormateada + ' , ' + horaFormateada;
+        }
+    
+        setInterval(actualizarFechaHoraSalida, 1000);
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
