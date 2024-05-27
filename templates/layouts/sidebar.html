@@ -14,6 +14,8 @@
         <hr class="sidebar-divider" />
 
         <ul class="nav flex-column">
+
+          <!-- Lavaderia -->
           <li class="nav-item">
             <a
               class="nav-link text-white"
@@ -43,6 +45,7 @@
             </div>
           </li>
 
+          <!-- Cochera -->
           <li class="nav-item">
             <a
               class="nav-link text-white"
@@ -72,6 +75,7 @@
             </div>
           </li>
 
+          <!-- Caja -->
           <li class="nav-item">
             <a
               class="nav-link text-white"
@@ -87,12 +91,9 @@
             <div class="collapse" id="submenu-caja">
               <ul class="nav flex-column">
                 <li class="nav-item">
-                  <a class="nav-link text-white1" href="#"> Caja Lavadero </a>
+                  <a class="nav-link text-white1" href="{% url 'cajaGeneral' %} "> Caja  </a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link text-white1" href="#"> Caja Cochera </a>
-                </li>
-
+               
                 <li class="nav-item">
                   <a class="nav-link text-white1" href="{% url 'registrar_tarifa_vehiculo' %}">Registrar Tarifa</a>
                 </li>
@@ -101,6 +102,7 @@
             </div>
           </li>
 
+          <!-- Salida -->
           <li class="nav-item">
             <a
               class="nav-link text-white"

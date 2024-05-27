@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caja Lavadero</title>
+    <title>Caja</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -19,7 +19,20 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 ">
 
+        <h5 class="card-title mt-3 mb-3"><i class="fas fa-cash-register"></i> CAJA</h5>
         
+        <div class="form-container text-center mb-3">
+            <p class="mb-3 mt-3">Tener cuidado con el cierre de caja , al hacer el ciere de caja no habra modificaciones</p>
+
+            <a href="{% url 'cajaLavanderia' %}" class="btn btn-primary d-inline-block mx-2 mb-3" style="background-color: #3E82FF;">CAJA LAVADERO</a>
+
+            <button type="button" class="btn btn-success d-inline-block mx-2 mb-3"  style="background-color: #97CB1E;" onclick="window.location.href=' '">CAJA COCHERA</button>
+
+        </div>
+        
+        <div class="text-left mt-3">
+            <button type="button" class="btn btn-danger"  style="background-color: #CB705D;">Reporte General de Caja</button>
+        </div>
 
     </main>
 

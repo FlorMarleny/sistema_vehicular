@@ -26,6 +26,7 @@ class Lavanderia(models.Model):
         ('en_proceso', 'En proceso'),
         ('terminada', 'Terminada'),
     )
+   
     
     tarifa_vehiculo = models.ForeignKey(TarifaVehiculo, on_delete=models.CASCADE)
     conductor = models.ForeignKey(Conductor, on_delete=models.CASCADE)
@@ -40,7 +41,9 @@ class Lavanderia(models.Model):
     efectivo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     vuelto = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='en_proceso')
-    
+    caja_cerrada = models.BooleanField(default=False)
+
+
     def registrar_salida(self):
         self.fecha_hora_salida = timezone.now()
         self.save()

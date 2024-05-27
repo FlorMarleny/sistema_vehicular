@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'accounts',
     'lavado',
     'tarifas_vehiculos',
+    'caja',
 ]
 
 MIDDLEWARE = [
