@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    
+    <div class="container border">
+
+        <div class="text-center">
+            <h2 class="font-weight-bold mb-4">TICKET DE SALIDA</h2>
+            <h4 class="mb-3">ESTACIÓN DE RUTA TIPO II</h4>
+            <h4>"SAN PABLO"</h4>
+        </div>
+
+        <p>Placa: </p>
+        <h1>{{ lavanderia.vehiculo.placa }} </h1>
+        <hr>
+        <p>Tipo de Vehículo: {{ lavanderia.tarifa_vehiculo.tipo_vehiculo }}</p>
+        <hr>
+
+        <p>Fecha y Hora de Entrada: {{ lavanderia.fecha_hora_entrada }}</p>
+        <hr>
+
+        <p>Fecha y Hora de Salida: <span id="ticket_fecha_hora_salida">{{ lavanderia.fecha_hora_salida|date:"d/m/Y H:i:s" }}</span></p>
+        <hr>
+
+        <p>Tiempo: {{ lavanderia.tiempo }}</p>
+        <hr>
+
+        <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3> 
+
+        <div class="text-center">
+            <h5>Estación de Ruta Tipo II</h5>
+            <p> Gracias por su preferencia.</p>
+        </div>
+
+        {% comment %} <img src="{{ lavanderia.codigo_barras }}" alt="Código de Barras"> {% endcomment %}
+
+    </div>
+
+
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+
+   
+</body>
+</html>

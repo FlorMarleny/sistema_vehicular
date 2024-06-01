@@ -23,14 +23,12 @@
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
         <div class="container mt-4">
-            <h1 class="mb-4">Detalles de Salida</h1>
+            <h5 class="mb-4"><i class="fas fa-clipboard-list"></i> Detalles de Registro</h5>
     
-            <div class="card">
-                <div class="card-body">
+            <div class="form-container">
 
-                    <h5 class="card-title ">REALIZAR PROCESO DE IDENTIFICACIÓN DE LAS ACTIVIDADES</h5>
 
-                    <div class="row mt-5">
+                    <div class="row mt-4">
                         <!-- Conductor -->
                         <div class="col-md-6 border-right">
     
@@ -138,8 +136,8 @@
 
                             <div class="row">
     
-                                <div class="form-group col-md-12 text-right " >
-                                    <button type="submit" class="btn-submit">Ir a Pagar</button>
+                                <div class="form-group col-md-12 text-right " >    
+                                    <a href="{% url 'accedersalida' %}?lavanderia_id={{ lavanderia.id }}" class="btn btn-danger btn-sm" style="background-color: #CB705D;">Acceder</a>
                                 </div>
                 
                             </div>
@@ -147,9 +145,7 @@
                         </div>
      
                     </div>
-                                        
-                </div>
-
+                                
             </div>
 
         </div>

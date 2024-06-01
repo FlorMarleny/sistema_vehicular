@@ -1,4 +1,64 @@
-{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Servicios</title>
+</head>
+<body>
+    <h1>Registro de Servicios</h1>
+    <form method="post">
+        {% csrf_token %}
+        <h2>Datos del Conductor</h2>
+        {{ conductor_form.as_p }}
+
+        <h2>Datos del Vehículo</h2>
+        {{ vehiculo_form.as_p }}
+
+        <h2>Servicios</h2>
+        {{ servicio_form.as_p }}
+
+        <div id="cochera-fields" style="display: none;">
+            <h2>Datos de la Cochera</h2>
+            {{ cochera_form.as_p }}
+        </div>
+
+        <div id="lavanderia-fields" style="display: none;">
+            <h2>Datos de la Lavandería</h2>
+            {{ lavanderia_form.as_p }}
+        </div>
+
+        <button type="submit">Registrar</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cocheraCheckbox = document.querySelector('input[name="cochera"]');
+            const lavanderiaCheckbox = document.querySelector('input[name="lavanderia"]');
+            const cocheraFields = document.getElementById('cochera-fields');
+            const lavanderiaFields = document.getElementById('lavanderia-fields');
+
+            cocheraCheckbox.addEventListener('change', function() {
+                cocheraFields.style.display = cocheraCheckbox.checked ? 'block' : 'none';
+            });
+
+            lavanderiaCheckbox.addEventListener('change', function() {
+                lavanderiaFields.style.display = lavanderiaCheckbox.checked ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -303,4 +363,4 @@
 
     </main>
 </body>
-</html>
+</html> {% endcomment %}

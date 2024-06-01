@@ -1,7 +1,8 @@
 from django.db import models
 from tarifas_vehiculos.models import TarifaVehiculo
 from django.utils import timezone
-
+import barcode
+from barcode.writer import ImageWriter
 
 class Conductor(models.Model):
     dni = models.CharField(max_length=8)
@@ -27,7 +28,7 @@ class Lavanderia(models.Model):
         ('terminada', 'Terminada'),
     )
    
-    
+
     tarifa_vehiculo = models.ForeignKey(TarifaVehiculo, on_delete=models.CASCADE)
     conductor = models.ForeignKey(Conductor, on_delete=models.CASCADE)
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
@@ -43,6 +44,7 @@ class Lavanderia(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADOS, default='en_proceso')
     caja_cerrada = models.BooleanField(default=False)
 
+    codigo_barras = models.ImageField(upload_to='codigos_barras/', blank=True)
 
     def registrar_salida(self):
         self.fecha_hora_salida = timezone.now()
@@ -55,4 +57,31 @@ class Lavanderia(models.Model):
         if self.cochera:
             total += self.precio_cochera or 0
         return total
+  
+    def save(self, *args, **kwargs):
+        # Generar y guardar el código de barras solo cuando se crea un nuevo registro
+        if not self.pk:
+            codigo = f'{self.vehiculo.placa}-{self.conductor.dni}-{timezone.now().strftime("%Y%m%d")}'
+            ean = barcode.get_barcode_class('code128')
+            codigo_barras = ean(codigo, writer=ImageWriter())
+            archivo_imagen = codigo_barras.save('codigo_barras')
+            self.codigo_barras = archivo_imagen
+
+        # Calcular y guardar el total a pagar
+        self.total_a_pagar = self.calcular_total_a_pagar()
+
+        # Llamar al método save() original para guardar el objeto
+        super().save(*args, **kwargs)
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   

@@ -19,7 +19,7 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h5 class="card-title mt-3 mb-3">REGISTRO</h5>
+        <h5 class="card-title mt-3 mb-3"><i class="fas fa-clipboard-list"></i> REGISTRO</h5>
 
         <div class="form-container">
                         
@@ -29,6 +29,8 @@
                 <div class="row">
                 <!-- Conductor -->
                     <div class="col-md-6 border-right">
+
+                        {% comment %} <h5><i class="fas fa-user"></i> Conductor</h5> {% endcomment %}
 
                         <div class="form-group">
                             <label for="dni">DNI:</label>
@@ -54,8 +56,20 @@
                             </div>
                         </div>
 
+                        <div class="row " style="margin-left: 10px;">
+                            <div class="form-group form-check col-md-2">
+                                <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero">
+                                <label class="form-check-label" for="id_lavadero">Lavadero</label>
+                            </div>
+                            <div class="form-group form-check col-md-2">
+                                <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
+                                <label class="form-check-label" for="id_cochera">Cochera</label>
+                            </div>
+                        </div>
+
                     </div>
         
+                    
                     <!-- Vehículo -->
                     <div class="col-md-6 border-right">
 
@@ -96,47 +110,45 @@
                             <label for="id_propietario">Propietario:</label>
                             {{ vehiculo_form.propietario }}
                         </div>
+
+
                     </div>
 
+                    
                 </div>
 
                 <!-- Lavandería -->
-                
-                 <div class="row " style="margin-left: 10px;">
-                    <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero">
-                        <label class="form-check-label" for="id_lavadero">Lavadero</label>
-                    </div>
-                    <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
-                        <label class="form-check-label" for="id_cochera">Cochera</label>
-                    </div>
-                </div>
-
                 <div class="row">
 
-                    <label for="tarifa_vehiculo">Tarifa del Vehículo:</label>
-                    <select name="tarifa_vehiculo" id="tarifa_vehiculo" required>
-                        {% for tarifa in tarifas_vehiculo %}
-                            <option value="{{ tarifa.id }}" 
-                                    data-precio-manana="{{ tarifa.precio_manana }}"
-                                    data-precio-tarde="{{ tarifa.precio_tarde }}"
-                                    data-precio-noche="{{ tarifa.precio_noche }}"
-                                    data-precio-dia-completo="{{ tarifa.precio_dia_completo }}">
-                                {{ tarifa.tipo_vehiculo }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                     
-                    <label for="tiempo">Tiempo del Día:</label>
-                    <select name="tiempo" id="tiempo" required>
-                        <option value="manana">Mañana</option>
-                        <option value="tarde">Tarde</option>
-                        <option value="noche">Noche</option>
-                        <option value="dia_completo">Día Completo</option>
-                    </select>
-                    <label for="precio">Precio:</label>
-                    <input type="text" id="precio" name="precio" readonly>
+                    <div class="form-group form-check col-md-2">
+                        <label for="tarifa_vehiculo">Tarifa del Vehículo:</label>
+                        <select name="tarifa_vehiculo" id="tarifa_vehiculo" required>
+                            {% for tarifa in tarifas_vehiculo %}
+                                <option value="{{ tarifa.id }}" 
+                                        data-precio-manana="{{ tarifa.precio_manana }}"
+                                        data-precio-tarde="{{ tarifa.precio_tarde }}"
+                                        data-precio-noche="{{ tarifa.precio_noche }}"
+                                        data-precio-dia-completo="{{ tarifa.precio_dia_completo }}">
+                                    {{ tarifa.tipo_vehiculo }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group form-check col-md-2">
+                        <label for="tiempo">Tiempo del Día:</label>
+                        <select name="tiempo" id="tiempo" required>
+                            <option value="manana">Mañana</option>
+                            <option value="tarde">Tarde</option>
+                            <option value="noche">Noche</option>
+                            <option value="dia_completo">Día Completo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-check col-md-2">
+                        <label for="precio">Precio:</label>
+                        <input type="text" id="precio" name="precio" readonly>
+                    </div>
 
                     <div class="form-group col-md-6 text-right " >
                         <button type="submit" class="btn-submit">Registrar</button>
@@ -147,7 +159,6 @@
             </form> 
 
         </div>
-
 
     </main>
 

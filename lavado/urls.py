@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import lavado_view , editar_lavanderia, detalles_lavanderia, eliminar_lavanderia,salidas ,registro_lavanderia 
+from .views import lavado_view , editar_lavanderia, detalles_lavanderia, eliminar_lavanderia,registro_lavanderia 
 from . import views
 
 
@@ -14,5 +14,5 @@ urlpatterns = [
     path('lavado/detalles-lavanderia/<int:id>/', detalles_lavanderia, name='detalles_lavanderia'),
     path('lavado/eliminar-lavanderia/<int:id>/', eliminar_lavanderia, name='eliminar_lavanderia'),
     path('salidas/', views.salidas, name='salidas'),
-    path('accedersalida/', views.acceder_salida, name='accedersalida'),
+    path('accedersalida/', views.acceder_salida, name='accedersalida'),   
 ]

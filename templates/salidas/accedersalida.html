@@ -21,14 +21,12 @@
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
         <div class="container mt-4">
-            <h1 class="mb-4">Detalles de Salida</h1>
+
+            <h5 class="mb-4"><i class="fas fa-sign-out-alt"></i> Detalles de Salida</h5>
     
-            <div class="card">
-                <div class="card-body">
+            <div class="form-container">
 
-                    <h5 class="card-title ">REALIZAR PROCESO DE IDENTIFICACIÓN DE LAS ACTIVIDADES</h5>
-
-                    <div class="row mt-5">
+                    <div class="row mt-4">
 
                         <div class="col-md-6 border-right">
 
@@ -112,17 +110,25 @@
                                 </div>
                                 <div class="row" style="margin-left: 10px;">
                                     <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3>
+
                                     <div class="form-group col-md-4 text-right">
+                                        
                                         <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
                                     </div>
+
+
+                                    {% comment %} <div class="form-group col-md-4 text-right">
+                                        <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
+                                    </div> {% endcomment %}
+
+
                                 </div>
                             </form>
 
                         </div>
 
                     </div>
-    
-                </div>
+
             </div>
         </div>
 
@@ -130,6 +136,7 @@
 
 
     <script>
+
         function calcularVuelto() {
             var efectivo = parseFloat(document.getElementById('efectivo').value);
             if (!isNaN(efectivo) && efectivo >= 0) {
@@ -147,12 +154,95 @@
                 document.getElementById('error-mensaje').textContent = 'Error: ingrese un número positivo';
             }
         }
+
         document.getElementById('efectivo').addEventListener('input', calcularVuelto);
 
+
+
+
+        document.getElementById('boton_pagar').addEventListener('click', function() {
+            calcularVuelto(); 
+            var nuevaVentana = window.open('', '_blank');
+            nuevaVentana.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Ticket</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                        }
+                        .ticket-container {
+                            width: 300px;
+                            margin: 0 auto;
+                            text-align: center;
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                        }
+                        .ticket-container h5 {
+                            margin: 10px 0;
+                        }
+                        .ticket-container p {
+                            margin: 5px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="ticket-container">
+                        <h5>Detalles de Salida</h5>
+                        <p>Placa: {{ lavanderia.vehiculo.placa }}</p>
+                        <p>Conductor: {{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</p>
+                        <p>Fecha y Hora de Entrada: {{ lavanderia.fecha_hora_entrada }}</p>
+                        <p>Fecha y Hora de Salida: <span id="ticket_fecha_hora_salida">{{ lavanderia.fecha_hora_salida|date:"d/m/Y H:i:s" }}</span></p>
+                        <p>Tipo de Vehículo: {{ lavanderia.tarifa_vehiculo.tipo_vehiculo }}</p>
+                        <p>Tiempo: {{ lavanderia.tiempo }}</p>
+                        {% if lavanderia.lavadero %}
+                        <p>Precio por Lavado: S/ {{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
+                        {% endif %}
+                        {% if lavanderia.cochera %}
+                        <p>Precio por Cochera: S/ {{ lavanderia.precio_cochera }}</p>
+                        {% endif %}
+                        <p>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            // Cerramos el documento HTML
+            nuevaVentana.document.close();
+            
+            // Agregamos la instrucción de impresión directamente después de cerrar el documento HTML
+            nuevaVentana.onload = function() {
+                this.print();
+            };
+        });
         
-       function actualizarFechaHoraSalida() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function actualizarFechaHoraSalida() {
             var fechaHoraSalidaElemento = document.getElementById('fecha_hora_salida');
-            var ahora = new Date(); // Obtener la fecha y hora actual en JavaScript
+            var ahora = new Date(); 
             var fechaFormateada = ('0' + ahora.getDate()).slice(-2) + '/' + ('0' + (ahora.getMonth() + 1)).slice(-2) + '/' + ahora.getFullYear();
             var horas = ahora.getHours().toString().padStart(2, '0');
             var minutos = ahora.getMinutes().toString().padStart(2, '0');
@@ -160,13 +250,23 @@
             var horaFormateada = horas + ':' + minutos + ':' + segundos;
             fechaHoraSalidaElemento.textContent = fechaFormateada + ' , ' + horaFormateada;
         }    
-
         setInterval(actualizarFechaHoraSalida, 1000);
+      
+    </script>
+    
+
+
+    <script > 
+
+       
        
 
     </script>
-    
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html> 

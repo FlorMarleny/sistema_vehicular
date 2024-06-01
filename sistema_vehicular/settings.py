@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'lavado',
+    'estacionamiento',
     'tarifas_vehiculos',
     'caja',
 ]
@@ -107,6 +108,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 
