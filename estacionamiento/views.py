@@ -1,166 +1,152 @@
-import requests
-from django.shortcuts import render, redirect
-from .forms import ConductorForm, VehiculoForm, CocheraForm, LavanderiaForm, ServicioForm
-from .models import Conductor, Vehiculo, Cochera
-from lavado.models import Lavanderia
-from tarifas_vehiculos.models import TarifaVehiculo
+from estacionamiento.forms import CocheraForm, ConductorForm, VehiculoForm
+from .models import Cochera
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
+from tarifas_vehiculos.models import TarifaVehiculo
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+from django.urls import reverse
 
 
 def estacionamiento_view(request):
     return render(request, 'estacionamiento.html')
 
+def historial_cochera(request):
+    query = request.GET.get('q')
+    cocheras = Cochera.objects.filter(
+        cochera=True
+    ).order_by('-fecha_hora_entrada')
 
-# def registro_cochera(request):
-#     tarifas_vehiculo = TarifaVehiculo.objects.all()
+    total_registros = cocheras.count()
 
-#     if request.method == 'POST':
-#         conductor_form = ConductorForm(request.POST)
-#         vehiculo_form = VehiculoForm(request.POST)
-#         cochera_form = CocheraForm(request.POST)
-#         lavanderia_form = LavanderiaForm(request.POST)
-#         servicio_form = ServicioForm(request.POST)
+    if query:
+        cocheras = cocheras.filter(
+            Q(conductor__nombres__icontains=query) |
+            Q(conductor__apellidos__icontains=query) |
+            Q(vehiculo__placa__icontains=query) |
+            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query)
+        )
 
-#         if conductor_form.is_valid() and vehiculo_form.is_valid() and servicio_form.is_valid():
-#             conductor = conductor_form.save()
-#             vehiculo = vehiculo_form.save()
+    paginator = Paginator(cocheras, 10)
+    page_number = request.GET.get('page')
 
-#             if servicio_form.cleaned_data['cochera'] and cochera_form.is_valid():
-#                 cochera = cochera_form.save(commit=False)
-#                 cochera.conductor = conductor
-#                 cochera.vehiculo = vehiculo
-#                 cochera.fecha_hora_entrada = timezone.now()
-#                 cochera.total_a_pagar = cochera.calcular_total_a_pagar()
-#                 cochera.save()
+    try:
+        cocheras = paginator.page(page_number)
+    except PageNotAnInteger:
+        cocheras = paginator.page(1)
+    except EmptyPage:
+        cocheras = paginator.page(paginator.num_pages)
 
-#             if servicio_form.cleaned_data['lavanderia'] and lavanderia_form.is_valid():
-#                 lavanderia = lavanderia_form.save(commit=False)
-#                 lavanderia.conductor = conductor
-#                 lavanderia.vehiculo = vehiculo
-#                 lavanderia.fecha_hora_entrada = timezone.now()
-#                 lavanderia.total_a_pagar = lavanderia.calcular_total_a_pagar()
-#                 lavanderia.save()
+    context = {
+        'cocheras': cocheras,
+        'total_registros': total_registros
+    }
 
-#             return redirect('registro_cochera')
-#         else:
-#             error_messages = []
-#             if not conductor_form.is_valid():
-#                 error_messages.append('Error en el formulario de conductor.')
-#             if not vehiculo_form.is_valid():
-#                 error_messages.append('Error en el formulario de vehículo.')
-#             if not servicio_form.is_valid():
-#                 error_messages.append('Error en el formulario de servicio.')
-#             if servicio_form.cleaned_data['cochera'] and not cochera_form.is_valid():
-#                 error_messages.append('Error en el formulario de cochera.')
-#             if servicio_form.cleaned_data['lavanderia'] and not lavanderia_form.is_valid():
-#                 error_messages.append('Error en el formulario de lavandería.')
+    return render(request, 'cochera/historialCochera.html', context)
 
-#             context = {
-#                 'conductor_form': conductor_form,
-#                 'vehiculo_form': vehiculo_form,
-#                 'cochera_form': cochera_form,
-#                 'lavanderia_form': lavanderia_form,
-#                 'servicio_form': servicio_form,
-#                 'tarifas_vehiculo': tarifas_vehiculo,
-#                 'error_message': ' '.join(error_messages),
-#             }
-#             return render(request, 'cochera/registrarCochera.html', context)
-#     else:
-#         conductor_form = ConductorForm()
-#         vehiculo_form = VehiculoForm()
-#         cochera_form = CocheraForm()
-#         lavanderia_form = LavanderiaForm()
-#         servicio_form = ServicioForm()
-
-#     context = {
-#         'conductor_form': conductor_form,
-#         'vehiculo_form': vehiculo_form,
-#         'cochera_form': cochera_form,
-#         'lavanderia_form': lavanderia_form,
-#         'servicio_form': servicio_form,
-#         'tarifas_vehiculo': tarifas_vehiculo,
-#     }
-
-#     return render(request, 'cochera/registrarCochera.html', context)
-
-
-
-
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from .forms import ConductorForm, VehiculoForm, CocheraForm, ServicioForm
-from .models import Conductor, Vehiculo, Cochera
-from tarifas_vehiculos.models import TarifaVehiculo
-
-def registro_cochera(request):
+def editar_cochera(request, id):
+    cochera = get_object_or_404(Cochera, id=id)
     tarifas_vehiculo = TarifaVehiculo.objects.all()
 
     if request.method == 'POST':
-        conductor_form = ConductorForm(request.POST)
-        vehiculo_form = VehiculoForm(request.POST)
-        cochera_form = CocheraForm(request.POST)
-        
-        servicio_form = ServicioForm(request.POST)
+        cochera_form = CocheraForm(request.POST, instance=cochera)
+        conductor_form = ConductorForm(
+            request.POST, instance=cochera.conductor)
+        vehiculo_form = VehiculoForm(request.POST, instance=cochera.vehiculo)
 
-        if conductor_form.is_valid() and vehiculo_form.is_valid() and cochera_form.is_valid() and servicio_form.is_valid():
+        if cochera_form.is_valid() and conductor_form.is_valid() and vehiculo_form.is_valid():
+            cochera = cochera_form.save(commit=False)
             conductor = conductor_form.save()
             vehiculo = vehiculo_form.save()
 
-            cochera = cochera_form.save(commit=False)
-            cochera.conductor = conductor
-            cochera.vehiculo = vehiculo
-            cochera.fecha_hora_entrada = timezone.now()
-            cochera.total_a_pagar = cochera.calcular_total_a_pagar()
-            cochera.save()
+            if 'tarifa_vehiculo' in request.POST and 'tiempo' in request.POST:
+                tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
+                tiempo = request.POST.get('tiempo')
+                try:
+                    tarifa_vehiculo = TarifaVehiculo.objects.get(
+                        id=tarifa_vehiculo_id)
+                    cochera.tarifa_vehiculo = tarifa_vehiculo
+                    cochera.tiempo = tiempo
 
-            return redirect('registro_cochera')
+                    if tiempo == 'manana':
+                        cochera.precio_cochera = tarifa_vehiculo.precio_manana
+                    elif tiempo == 'tarde':
+                        cochera.precio_cochera = tarifa_vehiculo.precio_tarde
+                    elif tiempo == 'noche':
+                        cochera.precio_cochera = tarifa_vehiculo.precio_noche
+                    elif tiempo == 'dia_completo':
+                        cochera.precio_cochera = tarifa_vehiculo.precio_dia_completo
+
+                    cochera.total_a_pagar = cochera.calcular_total_a_pagar()
+                    cochera.save()
+
+                    print(f"Cochera actualizada correctamente: {cochera.id}")
+                    return redirect('historial_cochera')
+                except TarifaVehiculo.DoesNotExist:
+                    print(
+                        f"TarifaVehiculo con ID {tarifa_vehiculo_id} no encontrado.")
+                    pass
+                except Exception as e:
+                    print(f"Error al actualizar cochera: {str(e)}")
+                    pass
+            else:
+                print("Datos de tarifa_vehiculo y tiempo no encontrados en POST.")
         else:
-            error_messages = []
-            if not conductor_form.is_valid():
-                error_messages.append('Error en el formulario de conductor.')
-            if not vehiculo_form.is_valid():
-                error_messages.append('Error en el formulario de vehículo.')
-            if not cochera_form.is_valid():
-                error_messages.append('Error en el formulario de cochera.')
-            if not servicio_form.is_valid():
-                error_messages.append('Error en el formulario de servicio.')
-
-            context = {
-                'conductor_form': conductor_form,
-                'vehiculo_form': vehiculo_form,
-                'cochera_form': cochera_form,
-                'servicio_form': servicio_form,
-                'tarifas_vehiculo': tarifas_vehiculo,
-                'error_message': ' '.join(error_messages),
-            }
-            return render(request, 'cochera/registrarCochera.html', context)
+            print("Formularios inválidos.")
     else:
-        conductor_form = ConductorForm()
-        vehiculo_form = VehiculoForm()
-        cochera_form = CocheraForm()
-        servicio_form = ServicioForm()
+        cochera_form = CocheraForm(instance=cochera)
+        conductor_form = ConductorForm(instance=cochera.conductor)
+        vehiculo_form = VehiculoForm(instance=cochera.vehiculo)
 
     context = {
+        'cochera': cochera,
+        'cochera_form': cochera_form,
         'conductor_form': conductor_form,
         'vehiculo_form': vehiculo_form,
-        'cochera_form': cochera_form,
-        'servicio_form': servicio_form,
         'tarifas_vehiculo': tarifas_vehiculo,
     }
+    return render(request, 'cochera/opciones/editar_cochera.html', context)
 
-    return render(request, 'cochera/registrarCochera.html', context)
+def detalles_cochera(request, id):
+    cochera = get_object_or_404(Cochera, id=id)
+    context = {
+        'cochera': cochera
+    }
+    return render(request, 'cochera/opciones/detalles_cochera.html', context)
 
+def eliminar_cochera(request, id):
+    if request.method == 'POST':
+        cochera = get_object_or_404(Cochera, id=id)
+        cochera.delete()
+        return JsonResponse({'message': 'cochera eliminada con éxito'})
 
+    # Si no es una solicitud POST, devuelve un error
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+def acceder_salida_cochera(request):
+    if request.method == 'GET':
+        cochera_id = request.GET.get('cochera_id')
+        cochera = get_object_or_404(Cochera, id=cochera_id)
 
+        return render(request, 'salidas/acceder_salida_cochera.html', {'cochera': cochera})
 
+    elif request.method == 'POST':
+        cochera_id = request.POST.get('cochera_id')
+        cochera = get_object_or_404(Cochera, id=cochera_id)
+        efectivo = request.POST.get('efectivo')
+        vuelto = request.POST.get('vuelto')
 
+        try:
+            cochera.efectivo = float(efectivo)
+            cochera.vuelto = float(vuelto)
+            cochera.fecha_hora_salida = timezone.now()
+            cochera.estado = 'terminada'
+            cochera.save()
+            print(cochera.fecha_hora_salida)
 
+            return HttpResponseRedirect(reverse('historial_cochera'))
+        except ValueError:
+            return HttpResponseBadRequest("Datos inválidos.")
 
-
-
-
-
-
-
-
+    return HttpResponseBadRequest("Método no permitido.")

@@ -1,5 +1,5 @@
 from django.utils import timezone
-from django.http import HttpResponseBadRequest, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
+from django.http import  HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import LavanderiaForm, ConductorForm, VehiculoForm
 from django.views.decorators.csrf import csrf_exempt
@@ -9,8 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.urls import reverse
 from .models import Lavanderia, Conductor, Vehiculo
-from estacionamiento.models import Cochera as EstacionamientoCochera  
-
+from estacionamiento.models import Cochera as EstacionamientoCochera
 
 def lavado_view(request):
     if request.method == 'POST':
@@ -33,7 +32,8 @@ def lavado_view(request):
 
 def historial_lavanderia(request):
     query = request.GET.get('q')
-    lavanderias = Lavanderia.objects.filter(lavadero=True).order_by('-fecha_hora_entrada')
+    lavanderias = Lavanderia.objects.filter(
+        lavadero=True).order_by('-fecha_hora_entrada')
     total_registros = lavanderias.count()
 
     if query:
@@ -41,7 +41,7 @@ def historial_lavanderia(request):
             Q(conductor__nombres__icontains=query) |
             Q(conductor__apellidos__icontains=query) |
             Q(vehiculo__placa__icontains=query) |
-            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query)  # Modificación aquí
+            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query) 
         )
     paginator = Paginator(lavanderias, 10)
     page_number = request.GET.get('page')
@@ -52,41 +52,12 @@ def historial_lavanderia(request):
         lavanderias = paginator.page(1)
     except EmptyPage:
         lavanderias = paginator.page(paginator.num_pages)
-        
+
     context = {
         'lavanderias': lavanderias,
         'total_registros': total_registros
     }
     return render(request, 'lavanderia/historialLavanderia.html', context)
-
-def historial_cochera(request):
-    query = request.GET.get('q')
-    lavanderias = Lavanderia.objects.filter(cochera=True).order_by('-fecha_hora_entrada')
-    total_registros = lavanderias.count()
-
-    if query:
-        lavanderias = lavanderias.filter(
-            Q(conductor__nombres__icontains=query) |
-            Q(conductor__apellidos__icontains=query) |
-            Q(vehiculo__placa__icontains=query) |
-            Q(tarifa_vehiculo__tipo_vehiculo__icontains=query)
-        )
-
-    paginator = Paginator(lavanderias, 10)
-    page_number = request.GET.get('page')
-    
-    try:
-        lavanderias = paginator.page(page_number)
-    except PageNotAnInteger:
-        lavanderias = paginator.page(1)
-    except EmptyPage:
-        lavanderias = paginator.page(paginator.num_pages)
-    context = {
-        'lavanderias': lavanderias, 
-        'total_registros': total_registros
-    }
-
-    return render(request, 'cochera/historialCochera.html',context )
 
 @csrf_exempt
 def obtener_nombres_apellidos_por_dni(request):
@@ -142,7 +113,8 @@ def registro_lavanderia(request):
                 tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
                 tiempo = request.POST.get('tiempo')
                 try:
-                    tarifa_vehiculo = TarifaVehiculo.objects.get(id=tarifa_vehiculo_id)
+                    tarifa_vehiculo = TarifaVehiculo.objects.get(
+                        id=tarifa_vehiculo_id)
                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
 
                     if tiempo == 'manana':
@@ -280,7 +252,7 @@ def editar_lavanderia(request, id):
         conductor_form = ConductorForm(instance=lavanderia.conductor)
         vehiculo_form = VehiculoForm(instance=lavanderia.vehiculo)
 
-    context= {
+    context = {
         'lavanderia': lavanderia,
         'lavanderia_form': lavanderia_form,
         'conductor_form': conductor_form,
@@ -291,10 +263,10 @@ def editar_lavanderia(request, id):
 
 def detalles_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
-    context= {
+    context = {
         'lavanderia': lavanderia
     }
-    return render(request, 'lavanderia/detalles_lavanderia.html', context )
+    return render(request, 'lavanderia/detalles_lavanderia.html', context)
 
 def eliminar_lavanderia(request, id):
     if request.method == 'POST':
@@ -343,3 +315,4 @@ def acceder_salida(request):
             return HttpResponseBadRequest("Datos inválidos.")
 
     return HttpResponseBadRequest("Método no permitido.")
+

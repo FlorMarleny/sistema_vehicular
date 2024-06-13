@@ -1,4 +1,3 @@
-<!-- sidebar.html -->
 {% load static %}
 
 <div class="container-fluid">
@@ -13,6 +12,13 @@
         <hr class="sidebar-divider" />
 
         <ul class="nav flex-column">
+
+          <!-- Registro -->
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'registro_lavanderia' %}" >
+              <i class="fas fa-user-plus"></i> Registro
+            </a>
+          </li>
 
           <!-- Lavaderia -->
           <li class="nav-item">
@@ -29,11 +35,13 @@
             </a>
             <div class="collapse" id="submenu-lavanderia">
               <ul class="nav flex-column">
-                <li class="nav-item">
+                
+                {% comment %} <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'registro_lavanderia' %}" >
                     Registrar Lavadero
                   </a>
                 </li>
+                 {% endcomment %}
                 <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'historial_lavanderia' %}">
                     Historial de Lavadero
@@ -59,11 +67,11 @@
             </a>
             <div class="collapse" id="submenu-cochera">
               <ul class="nav flex-column">
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'registro_cochera' %}">
                     Registrar Cochera
                   </a>
-                </li>
+                </li> {% endcomment %}
                 <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'historial_cochera' %}">
                     Historial de Cochera

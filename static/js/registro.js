@@ -1,5 +1,4 @@
 
-
 $(document).ready(function(){
     $('#dni').on('input', function(){
         var dni = $(this).val();

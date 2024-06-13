@@ -1,0 +1,158 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Lavandería</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+    {% comment %} <script src="{% static 'js/registro.js' %}"></script> {% endcomment %}
+
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+        <div class="container mt-4">
+            <h5 class="mb-4"><i class="fas fa-clipboard-list"></i> Detalles de Registro</h5>
+    
+            <div class="form-container">
+
+
+                    <div class="row mt-4">
+                        <!-- Conductor -->
+                        <div class="col-md-6 border-right">
+    
+                            <div class="form-group">
+                                <label for="dni">DNI:</label>
+                                 <p class="card-text">{{ cochera.conductor.dni }} </p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="nombres">Nombres y Apellidos:</label>
+                                <p class="card-text">{{ cochera.conductor.nombres }} {{ cochera.conductor.apellidos }}</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="id_telefono">Teléfono:</label>
+                                    <p class="card-text">{{ cochera.conductor.telefono }} </p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="id_correo">Correo Electrónico:</label>
+                                    <p class="card-text">{{ cochera.conductor.correo }} </p>
+                                </div>
+                            </div>
+
+                            <div class="row " style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-2">
+                                    <label for="id_lavadero">Lavadero</label>
+                                    <p class="card-text">{% if cochera.lavadero %}Sí{% else %}No{% endif %}</p>
+                                </div>
+        
+                                <div class="form-group form-check col-md-2">
+                                    <label for="id_cochera">Cochera</label>
+                                    <p class="card-text">{% if cochera.cochera %}Sí{% else %}No{% endif %}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    
+                                <div class="form-group col-md-4">
+                                    <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
+                                    <p class="card-text">{{ cochera.tarifa_vehiculo.tipo_vehiculo }} </p>
+                                </div>
+                                
+                                <div class="form-group col-md-4">
+                                    <label for="id_tiempo">Tiempo:</label>
+                                    <p class="card-text">{{ cochera.tiempo}} </p>
+                                </div>
+            
+                                <div class="form-group col-md-4">
+                                    <label for="id_precio">Precio:</label>
+                                    <p class="card-text">{{ cochera.precio_cochera }} </p>
+                                </div>
+            
+                            </div>
+
+                        </div>
+            
+                        <!-- Vehículo -->
+                        <div class="col-md-6 border-right">
+    
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="id_placa">Placa:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.placa }} </p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="id_modelo">Modelo:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.modelo }} </p>
+                                </div>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="id_marca">Marca:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.marca }} </p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="id_matricula">Matrícula:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.matricula }} </p>
+                                </div>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="id_color">Color:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.color }} </p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="id_serie">Serie:</label>
+                                    <p class="card-text">{{ cochera.vehiculo.serie }} </p>
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="id_propietario">Propietario:</label>
+                                <p class="card-text">{{ cochera.vehiculo.propietario }} </p>
+                            </div>
+
+                            <div class="row" style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-6">
+                                    <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
+                                    <p class="card-text">{{ cochera.fecha_hora_entrada }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    
+                                <div class="form-group col-md-12 text-right " >    
+                                    <a href="{% url 'acceder_salida_cochera' %}?cochera_id={{ cochera.id }}" class="btn btn-danger btn-sm" style="background-color: #CB705D;">Acceder</a>
+                                </div>
+                
+                            </div>
+
+                        </div>
+     
+                    </div>
+                                
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> 

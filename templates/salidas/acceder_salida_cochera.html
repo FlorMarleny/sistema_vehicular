@@ -1,0 +1,252 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceder Salida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+        <div class="container mt-4">
+
+            <h5 class="mb-4"><i class="fas fa-sign-out-alt"></i> Detalles de Salida Cochera</h5>
+    
+            <div class="form-container">
+
+                    <div class="row mt-4">
+
+                        <div class="col-md-6 border-right">
+
+                            <div class="form-group">
+                                <label for="nombres">Placa:</label>
+                                <p class="card-text">{{ cochera.vehiculo.placa }}</p>
+                            </div>
+                                
+                            <div class="form-group">
+                                <label for="nombres">Conductor:</label>
+                                <p class="card-text">{{ cochera.conductor.nombres }} {{ cochera.conductor.apellidos }}</p>
+                            </div>
+
+                            <div class="row " style="margin-left: 10px;">
+                                <div class="form-group form-check col-md-2">
+                                    <label for="id_lavadero">Lavadero</label>
+                                    <p class="card-text">{% if cochera.lavadero %}Sí{% else %}No{% endif %}</p>
+                                </div>
+        
+                                <div class="form-group form-check col-md-2">
+                                    <label for="id_cochera">Cochera</label>
+                                    <p class="card-text">{% if cochera.cochera %}Sí{% else %}No{% endif %}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    
+                                <div class="form-group col-md-6">
+                                    <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
+                                    <p class="card-text">{{ cochera.tarifa_vehiculo.tipo_vehiculo }} </p>
+                                </div>
+                                
+                                <div class="form-group col-md-6">
+                                    <label for="id_tiempo">Tiempo:</label>
+                                    <p class="card-text">{{ cochera.tiempo }}</p>
+                                </div>
+            
+                            </div>
+
+                        </div>
+            
+                        <div class="col-md-6 border-right">
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="cochera_id" value="{{ cochera.id }}">
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6">
+                                        <label for="id_fecha_entrada">Fecha y Hora de Entrada:</label>
+                                        <p class="card-text">{{ cochera.fecha_hora_entrada }}</p>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="id_fecha_entrada">Fecha y Hora de Salida:</label>
+                                        <p id="fecha_hora_salida" class="card-text">{{ cochera.fecha_hora_salida|date:"d/m/Y H:i:s" }}</p>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6">
+                                        {% if cochera.lavadero %}
+                                            <label for="id_precio_laavdo">Precio por Lavado:</label>
+                                            <p class="card-text">S/ {{ cochera.tarifa_vehiculo.precio_lavado }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {% if cochera.cochera %}
+                                            <label for="id_precio_cochera">Precio por Cochera:</label>
+                                            <p class="card-text">S/ {{ cochera.precio_cochera }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left: 10px;">
+                                    <div class="form-group col-md-6 mt-1">
+                                        <label for="efectivo">Efectivo:</label>
+                                        <input type="number" id="efectivo" name="efectivo" class="form-control" required min="0">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="vuelto">Vuelto:</label>
+                                        <input type="text" id="vuelto" name="vuelto" class="form-control" readonly>
+                                        <small id="error-mensaje" class="text-danger"></small>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left: 10px;">
+                                    <h3>Total a pagar: S/ {{ cochera.total_a_pagar }}</h3>
+
+                                    <div class="form-group col-md-4 text-right">
+                                        
+                                        <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
+                                    </div>
+
+                                </div>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+            </div>
+        </div>
+
+    </main>
+
+
+    <script>
+
+        function calcularVuelto() {
+            var efectivo = parseFloat(document.getElementById('efectivo').value);
+            if (!isNaN(efectivo) && efectivo >= 0) {
+                var totalAPagar = parseFloat('{{ cochera.total_a_pagar }}');
+                var vuelto = efectivo - totalAPagar;
+                if (!isNaN(vuelto)) {
+                    document.getElementById('vuelto').value = vuelto.toFixed(2);
+                    document.getElementById('error-mensaje').textContent = '';
+                } else {
+                    document.getElementById('vuelto').value = '';
+                    document.getElementById('error-mensaje').textContent = 'Error: ingrese un valor válido';
+                }
+            } else {
+                document.getElementById('vuelto').value = '';
+                document.getElementById('error-mensaje').textContent = 'Error: ingrese un número positivo';
+            }
+        }
+
+        document.getElementById('efectivo').addEventListener('input', calcularVuelto);
+
+        document.getElementById('boton_pagar').addEventListener('click', function() {
+            calcularVuelto(); 
+            var nuevaVentana = window.open('', '_blank');
+            nuevaVentana.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Ticket</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                        }
+                        .ticket-container {
+                            width: 300px;
+                            margin: 0 auto;
+                            text-align: center;
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                        }
+                        .ticket-container h5 {
+                            margin: 10px 0;
+                        }
+                        .ticket-container p {
+                            margin: 5px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container border">
+
+                        <div class="text-center">
+                            <h2 class="font-weight-bold mb-4">TICKET DE SALIDA</h2>
+                            <h4 class="mb-3">ESTACIÓN DE RUTA TIPO II</h4>
+                            <h4>"SAN PABLO"</h4>
+                        </div>
+                
+                        <p>Placa: </p>
+                        <h1>{{ cochera.vehiculo.placa }} </h1>
+                        <hr>
+                        <p>Tipo de Vehículo: {{ cochera.tarifa_vehiculo.tipo_vehiculo }}</p>
+                        <hr>
+                
+                        <p>Fecha y Hora de Entrada: {{ cochera.fecha_hora_entrada }}</p>
+                        <hr>
+                
+                        <p>Fecha y Hora de Salida: <span id="ticket_fecha_hora_salida">{{ cochera.fecha_hora_salida|date:"d/m/Y H:i:s" }}</span></p>
+                        <hr>
+                
+                        <p>Tiempo: {{ cochera.tiempo }}</p>
+                        <hr>
+                
+                        <h3>Total a pagar: S/ {{ cochera.total_a_pagar }}</h3> 
+                
+                        <div class="text-center">
+                            <h5>Estación de Ruta Tipo II</h5>
+                            <p> Gracias por su preferencia.</p>
+                        </div>
+                
+                        {% comment %} <img src="{{ cochera.codigo_barras }}" alt="Código de Barras"> {% endcomment %}
+                
+                    </div>
+
+                </body>
+                </html>
+            `);
+            // Cerramos el documento HTML
+            nuevaVentana.document.close();
+            
+            // Agregamos la instrucción de impresión directamente después de cerrar el documento HTML
+            nuevaVentana.onload = function() {
+                this.print();
+            };
+        });
+
+        function actualizarFechaHoraSalida() {
+            var fechaHoraSalidaElemento = document.getElementById('fecha_hora_salida');
+            var ahora = new Date(); 
+            var fechaFormateada = ('0' + ahora.getDate()).slice(-2) + '/' + ('0' + (ahora.getMonth() + 1)).slice(-2) + '/' + ahora.getFullYear();
+            var horas = ahora.getHours().toString().padStart(2, '0');
+            var minutos = ahora.getMinutes().toString().padStart(2, '0');
+            var segundos = ahora.getSeconds().toString().padStart(2, '0');
+            var horaFormateada = horas + ':' + minutos + ':' + segundos;
+            fechaHoraSalidaElemento.textContent = fechaFormateada + ' , ' + horaFormateada;
+        }    
+        setInterval(actualizarFechaHoraSalida, 1000);
+      
+    </script>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html> 
