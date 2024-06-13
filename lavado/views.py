@@ -1,5 +1,4 @@
 from django.utils import timezone
-from .models import Lavanderia, Lavanderia, TarifaVehiculo
 from django.http import HttpResponseBadRequest, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import LavanderiaForm, ConductorForm, VehiculoForm
@@ -9,6 +8,8 @@ from tarifas_vehiculos.models import TarifaVehiculo
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.urls import reverse
+from .models import Lavanderia, Conductor, Vehiculo
+from estacionamiento.models import Cochera as EstacionamientoCochera  
 
 
 def lavado_view(request):
@@ -30,10 +31,9 @@ def lavado_view(request):
     }
     return render(request, 'lavanderia/registrarLavanderia.html', context)
 
-
 def historial_lavanderia(request):
     query = request.GET.get('q')
-    lavanderias = Lavanderia.objects.filter(lavadero=True)
+    lavanderias = Lavanderia.objects.filter(lavadero=True).order_by('-fecha_hora_entrada')
     total_registros = lavanderias.count()
 
     if query:
@@ -59,10 +59,9 @@ def historial_lavanderia(request):
     }
     return render(request, 'lavanderia/historialLavanderia.html', context)
 
-
 def historial_cochera(request):
     query = request.GET.get('q')
-    lavanderias = Lavanderia.objects.filter(cochera=True)
+    lavanderias = Lavanderia.objects.filter(cochera=True).order_by('-fecha_hora_entrada')
     total_registros = lavanderias.count()
 
     if query:
@@ -89,7 +88,6 @@ def historial_cochera(request):
 
     return render(request, 'cochera/historialCochera.html',context )
 
-
 @csrf_exempt
 def obtener_nombres_apellidos_por_dni(request):
     if request.method == 'POST':
@@ -108,97 +106,6 @@ def obtener_nombres_apellidos_por_dni(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-
-# def registro_lavanderia(request):
-#     tarifas_vehiculo = TarifaVehiculo.objects.all()
-
-#     if request.method == 'POST':
-#         lavanderia_form = LavanderiaForm(request.POST)
-#         conductor_form = ConductorForm(request.POST)
-#         vehiculo_form = VehiculoForm(request.POST)
-
-#         if lavanderia_form.is_valid() and conductor_form.is_valid() and vehiculo_form.is_valid():
-#             print("Todos los formularios son válidos.")
-#             conductor = conductor_form.save()
-#             vehiculo = vehiculo_form.save()
-#             lavanderia = lavanderia_form.save(commit=False)
-#             lavanderia.conductor = conductor
-#             lavanderia.vehiculo = vehiculo
-
-#             if 'tarifa_vehiculo' in request.POST and 'tiempo' in request.POST:
-#                 tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
-#                 tiempo = request.POST.get('tiempo')
-#                 try:
-#                     tarifa_vehiculo = TarifaVehiculo.objects.get(
-#                         id=tarifa_vehiculo_id)
-#                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
-
-#                     if tiempo == 'manana':
-#                         lavanderia.precio_cochera = tarifa_vehiculo.precio_manana
-#                     elif tiempo == 'tarde':
-#                         lavanderia.precio_cochera = tarifa_vehiculo.precio_tarde
-#                     elif tiempo == 'noche':
-#                         lavanderia.precio_cochera = tarifa_vehiculo.precio_noche
-#                     elif tiempo == 'dia_completo':
-#                         lavanderia.precio_cochera = tarifa_vehiculo.precio_dia_completo
-#                     lavanderia.tiempo = tiempo
-
-#                     lavanderia.total_a_pagar = lavanderia.calcular_total_a_pagar()
-#                     lavanderia.save()
-
-#                     print("Lavandería guardada correctamente.")
-#                     return redirect('registro_lavanderia')
-#                 except TarifaVehiculo.DoesNotExist:
-#                     print("Tarifa de vehículo no encontrada.")
-#                     return render(request, 'lavanderia/registrarLavanderia.html', {
-#                         'lavanderia_form': lavanderia_form,
-#                         'conductor_form': conductor_form,
-#                         'vehiculo_form': vehiculo_form,
-#                         'tarifas_vehiculo': tarifas_vehiculo,
-#                         'error_message': 'Tarifa de vehículo no encontrada'
-#                     })
-#             else:
-#                 print("Tarifa de vehículo o tiempo no seleccionados.")
-#                 return render(request, 'lavanderia/registrarLavanderia.html', {
-#                     'lavanderia_form': lavanderia_form,
-#                     'conductor_form': conductor_form,
-#                     'vehiculo_form': vehiculo_form,
-#                     'tarifas_vehiculo': tarifas_vehiculo,
-#                     'error_message': 'Debe seleccionar una tarifa y un tiempo para el vehículo'
-#                 })
-#         else:
-#             print("Errores en los formularios.")
-#             error_messages = []
-#             if not lavanderia_form.is_valid():
-#                 error_messages.append('Error en el formulario de lavandería.')
-#                 print(lavanderia_form.errors)
-#             if not conductor_form.is_valid():
-#                 error_messages.append('Error en el formulario de conductor.')
-#                 print(conductor_form.errors)
-#             if not vehiculo_form.is_valid():
-#                 error_messages.append('Error en el formulario de vehículo.')
-#                 print(vehiculo_form.errors)
-
-#             return render(request, 'lavanderia/registrarLavanderia.html', {
-#                 'lavanderia_form': lavanderia_form,
-#                 'conductor_form': conductor_form,
-#                 'vehiculo_form': vehiculo_form,
-#                 'tarifas_vehiculo': tarifas_vehiculo,
-#                 'error_message': ' '.join(error_messages),
-#             })
-#     else:
-#         lavanderia_form = LavanderiaForm()
-#         conductor_form = ConductorForm()
-#         vehiculo_form = VehiculoForm()
-
-#     return render(request, 'lavanderia/registrarLavanderia.html', {
-#         'lavanderia_form': lavanderia_form,
-#         'conductor_form': conductor_form,
-#         'vehiculo_form': vehiculo_form,
-#         'tarifas_vehiculo': tarifas_vehiculo,
-#     })
-
-
 def registro_lavanderia(request):
     tarifas_vehiculo = TarifaVehiculo.objects.all()
 
@@ -208,9 +115,25 @@ def registro_lavanderia(request):
         vehiculo_form = VehiculoForm(request.POST)
 
         if lavanderia_form.is_valid() and conductor_form.is_valid() and vehiculo_form.is_valid():
-            print("Todos los formularios son válidos.")
-            conductor = conductor_form.save()
-            vehiculo = vehiculo_form.save()
+            dni = conductor_form.cleaned_data['dni']
+            placa = vehiculo_form.cleaned_data['placa']
+
+            # Verificar si el conductor ya existe
+            try:
+                conductor = Conductor.objects.get(dni=dni)
+            except Conductor.DoesNotExist:
+                conductor = conductor_form.save()
+
+            # Verificar si el vehículo ya existe, si no existe, guardarlo
+            try:
+                vehiculo = Vehiculo.objects.get(placa=placa)
+            except Vehiculo.DoesNotExist:
+                vehiculo = vehiculo_form.save()
+
+            # Si hay múltiples vehículos con la misma placa, elegir el primero (o decidir cómo manejar este caso)
+            except Vehiculo.MultipleObjectsReturned:
+                vehiculo = Vehiculo.objects.filter(placa=placa).first()
+
             lavanderia = lavanderia_form.save(commit=False)
             lavanderia.conductor = conductor
             lavanderia.vehiculo = vehiculo
@@ -219,8 +142,7 @@ def registro_lavanderia(request):
                 tarifa_vehiculo_id = request.POST.get('tarifa_vehiculo')
                 tiempo = request.POST.get('tiempo')
                 try:
-                    tarifa_vehiculo = TarifaVehiculo.objects.get(
-                        id=tarifa_vehiculo_id)
+                    tarifa_vehiculo = TarifaVehiculo.objects.get(id=tarifa_vehiculo_id)
                     lavanderia.tarifa_vehiculo = tarifa_vehiculo
 
                     if tiempo == 'manana':
@@ -234,15 +156,36 @@ def registro_lavanderia(request):
                     lavanderia.tiempo = tiempo
 
                     lavanderia.total_a_pagar = lavanderia.calcular_total_a_pagar()
-                    lavanderia.save()
 
-                    print("Lavandería guardada correctamente.")
+                    # Guardar en la base de datos de estacionamiento si se selecciona cochera
+                    if 'cochera' in request.POST:
+                        print("Se seleccionó cochera.")
+                        estacionamiento_cochera = EstacionamientoCochera.objects.create(
+                            tarifa_vehiculo=tarifa_vehiculo,
+                            conductor=conductor,
+                            vehiculo=vehiculo,
+                            cochera=True,
+                            total_a_pagar=lavanderia.total_a_pagar,
+                            tiempo=tiempo,
+                            precio_cochera=lavanderia.precio_cochera,
+                            fecha_hora_entrada=lavanderia.fecha_hora_entrada,
+                            estado=lavanderia.estado,
+                            caja_cerrada=lavanderia.caja_cerrada
+                        )
+                        estacionamiento_cochera.save()
+                        print("Cochera también guardada en estacionamiento.")
+
+                    # Guardar en la base de datos de lavado si se selecciona lavadero
+                    if 'lavadero' in request.POST:
+                        print("Se seleccionó lavadero.")
+                        lavanderia.save()
+                        print("Lavandería también guardada en lavado.")
+
+                    # Redirigir después de guardar
                     return redirect('registro_lavanderia')
 
                 except TarifaVehiculo.DoesNotExist:
-                    print("Tarifa de vehículo no encontrada.")
                     error_message = 'Tarifa de vehículo no encontrada.'
-                    print(error_message)
                     context = {
                         'lavanderia_form': lavanderia_form,
                         'conductor_form': conductor_form,
@@ -253,9 +196,7 @@ def registro_lavanderia(request):
 
                     return render(request, 'lavanderia/registrarLavanderia.html', context)
             else:
-                print("Tarifa de vehículo o tiempo no seleccionados.")
                 error_message = 'Debe seleccionar una tarifa y un tiempo para el vehículo.'
-                print(error_message)
                 context = {
                     'lavanderia_form': lavanderia_form,
                     'conductor_form': conductor_form,
@@ -265,24 +206,20 @@ def registro_lavanderia(request):
                 }
                 return render(request, 'lavanderia/registrarLavanderia.html', context)
         else:
-            print("Errores en los formularios.")
             error_messages = []
             if not lavanderia_form.is_valid():
                 error_messages.append('Error en el formulario de lavandería.')
-                print(lavanderia_form.errors)
             if not conductor_form.is_valid():
                 error_messages.append('Error en el formulario de conductor.')
-                print(conductor_form.errors)
             if not vehiculo_form.is_valid():
                 error_messages.append('Error en el formulario de vehículo.')
-                print(vehiculo_form.errors)
 
             context = {
                 'lavanderia_form': lavanderia_form,
                 'conductor_form': conductor_form,
                 'vehiculo_form': vehiculo_form,
                 'tarifas_vehiculo': tarifas_vehiculo,
-                'error_message': error_message
+                'error_messages': error_messages
             }
             return render(request, 'lavanderia/registrarLavanderia.html', context)
     else:
@@ -297,7 +234,6 @@ def registro_lavanderia(request):
         'tarifas_vehiculo': tarifas_vehiculo,
     }
     return render(request, 'lavanderia/registrarLavanderia.html', context)
-
 
 def editar_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
@@ -353,7 +289,6 @@ def editar_lavanderia(request, id):
     }
     return render(request, 'lavanderia/editar_lavanderia.html', context)
 
-
 def detalles_lavanderia(request, id):
     lavanderia = get_object_or_404(Lavanderia, id=id)
     context= {
@@ -361,16 +296,14 @@ def detalles_lavanderia(request, id):
     }
     return render(request, 'lavanderia/detalles_lavanderia.html', context )
 
-
-
-# def detalles_lavanderia(request, id):
-#     lavanderia = Lavanderia.objects.get(id=id)
-#     return render(request, 'salidas/ticket.html' , {'lavanderia': lavanderia})
-
 def eliminar_lavanderia(request, id):
-    lavanderia = get_object_or_404(Lavanderia, id=id)
-    return render(request, 'lavanderia/eliminar_lavanderia.html', {'lavanderia': lavanderia})
+    if request.method == 'POST':
+        lavanderia = get_object_or_404(Lavanderia, id=id)
+        lavanderia.delete()
+        return JsonResponse({'message': 'Lavanderia eliminada con éxito'})
 
+    # Si no es una solicitud POST, devuelve un error
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 def salidas(request):
     if request.method == 'GET':
@@ -383,7 +316,6 @@ def salidas(request):
         return render(request, 'salidas/salidas.html', {'resultados': resultados})
 
     return HttpResponseBadRequest("Método no permitido")
-
 
 def acceder_salida(request):
     if request.method == 'GET':

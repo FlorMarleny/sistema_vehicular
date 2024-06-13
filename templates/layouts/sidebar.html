@@ -6,11 +6,10 @@
 
     <nav class="col-md-2 d-none d-md-block sidebar " style="height: 100vh;">
       <div class="sidebar-sticky">
-        <img
-          src="{% static 'img/Logo2.png' %}"
-          alt="Logo"
-          class="sidebar-logo"
-        />
+        <a href="{% url 'dashboard' %}">
+          <img src="{% static 'img/Logo2.png' %}" alt="Logo" class="sidebar-logo" />
+        </a>
+      
         <hr class="sidebar-divider" />
 
         <ul class="nav flex-column">
@@ -26,18 +25,18 @@
               aria-controls="submenu-lavanderia"
             >
               <i class="fas fa-soap mr-2"></i>
-              Lavandería
+              Lavadero
             </a>
             <div class="collapse" id="submenu-lavanderia">
               <ul class="nav flex-column">
                 <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'registro_lavanderia' %}" >
-                    Registrar Lavandería
+                    Registrar Lavadero
                   </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'historial_lavanderia' %}">
-                    Historial de Lavandería
+                    Historial de Lavadero
                   </a>
                 </li>
               </ul>
@@ -61,7 +60,7 @@
             <div class="collapse" id="submenu-cochera">
               <ul class="nav flex-column">
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'registro_lavanderia' %}">
+                  <a class="nav-link text-white" href="{% url 'registro_cochera' %}">
                     Registrar Cochera
                   </a>
                 </li>

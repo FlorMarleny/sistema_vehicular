@@ -17,6 +17,8 @@
     />
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
       .sidebar {
         background-color: #cb705d;
@@ -45,10 +47,160 @@
         border-top: 1px solid #ffffff; /* Color de la línea */
         margin-top: 10px; /* Margen superior para separar la línea de la imagen */
       }
+      .card-icon {
+        font-size: 3rem; /* Tamaño grande para el icono */
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        opacity: 0.1; /* Baja opacidad para que el icono no distraiga del texto */
+        z-index: 0;
+      }
+      .italic {
+        font-style: italic;
+      }
+      .card-title-large {
+        font-size: 2rem; /* Tamaño de fuente más grande */
+      }
+
     </style>
+
   </head>
   <body>
     {% include 'layouts/navbar.html' %} {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+    <div class="row mt-4">
+      <!-- Card de vehículos ingresados en cochera -->
+      <div class="col-md-3">
+          <div class="card" style="background-color: rgba(0, 123, 255, 0.2);">
+              <div class="card-body">
+                <p class="card-text card-title-large">{{ vehiculos_salidos_cochera }}</p>
+                <h5 class="card-title italic">Estacionamiento</h5>
+                <p class="card-text text-center">Entrada</p>
+                <i class="fas fa-car card-icon"></i>
+              </div>
+          </div>
+      </div>
+
+      <!-- Card de vehículos salida en cochera -->
+      <div class="col-md-3">
+        <div class="card" style="background-color: rgba(151, 203, 30, 0.2);">
+          <div class="card-body">
+                <p class="card-text card-title-large">{{ vehiculos_ingresados_cochera }}</p>
+                <h5 class="card-title italic">Estacionamiento</h5>
+                <p class="card-text text-center">Salida</p>
+                <i class="fas fa-sign-out-alt card-icon"></i> <!-- Icono de salida -->
+              </div>
+          </div>
+      </div>
+
+      <!-- Card de entrada de lavado -->
+      <div class="col-md-3">
+          <div class="card" style="background-color: rgba(0, 123, 255, 0.2);">
+              <div class="card-body">
+                <p class="card-text card-title-large">{{ vehiculos_ingresados_lavado }}</p>
+                <h5 class="card-title italic">Lavadero</h5>
+                <p class="card-text text-center">Entrada</p>
+                <i class="fas fa-car-crash card-icon"></i> <!-- Icono de coche -->
+              </div>
+          </div>
+      </div>
+
+      <!-- Card de salida de lavado -->
+      <div class="col-md-3">
+        <div class="card" style="background-color: rgba(151, 203, 30, 0.2);">
+          <div class="card-body">
+                <p class="card-text card-title-large">{{ vehiculos_salidos_lavado }}</p>
+                <h5 class="card-title italic">Lavadero</h5>
+                <p class="card-text text-center">Salida</p>
+                <i class="fas fa-sign-out-alt card-icon"></i> <!-- Icono de salida -->
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+    
+    <div class="row mt-4">
+
+      <div class="col-md-3 ">
+        <canvas id="myPieChart"></canvas>
+      </div>
+
+
+      <!-- Card de salida de lavado -->
+      <div class="col-md-3">
+        <div class="card" style="background-color: #D9D9D9;">
+          <div class="card-body">
+                <h5 class="card-title italic">Reporte General de Servicios</h5>
+              </div>
+          </div>
+      </div>
+      <!-- Card de salida de lavado -->
+      <div class="col-md-3">
+        <div class="card" style="background-color: #D9D9D9;">
+          <div class="card-body">
+                <h5 class="card-title italic">Historial General de Servicios</h5>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card" style="background-color: #D9D9D9;">
+          <div class="card-body">
+                <h5 class="card-title italic">Reporte General de Caja Chica</h5>
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+</main>
+
+<script>
+
+  var ctx = document.getElementById('myPieChart').getContext('2d');
+  var myPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          labels: ['Vehículos Lavado', 'Vehículos Cochera'],
+          datasets: [{
+              data: [{{ vehiculos_ingresados_lavado }}, {{ vehiculos_ingresados_cochera }}],
+              backgroundColor: ['#da4453', '#f2c94c'],
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'top',
+              },
+              tooltip: {
+                  callbacks: {
+                      label: function(context) {
+                          let label = context.label || '';
+                          if (label) {
+                              label += ': ';
+                          }
+                          if (context.parsed !== null) {
+                              label += context.parsed;
+                          }
+                          return label;
+                      }
+                  }
+              }
+          }
+      }
+  });
+
+
+</script>
+
+
+
+
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

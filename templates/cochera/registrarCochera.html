@@ -1,197 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Registro de Servicios</title>
-</head>
-<body>
-    <h1>Registro de Servicios</h1>
-    <form method="post">
-        {% csrf_token %}
-        <h2>Datos del Conductor</h2>
-        {{ conductor_form.as_p }}
-
-        <h2>Datos del Vehículo</h2>
-        {{ vehiculo_form.as_p }}
-
-        <h2>Servicios</h2>
-        {{ servicio_form.as_p }}
-
-        <div id="cochera-fields" style="display: none;">
-            <h2>Datos de la Cochera</h2>
-            {{ cochera_form.as_p }}
-        </div>
-
-        <div id="lavanderia-fields" style="display: none;">
-            <h2>Datos de la Lavandería</h2>
-            {{ lavanderia_form.as_p }}
-        </div>
-
-        <button type="submit">Registrar</button>
-    </form>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cocheraCheckbox = document.querySelector('input[name="cochera"]');
-            const lavanderiaCheckbox = document.querySelector('input[name="lavanderia"]');
-            const cocheraFields = document.getElementById('cochera-fields');
-            const lavanderiaFields = document.getElementById('lavanderia-fields');
-
-            cocheraCheckbox.addEventListener('change', function() {
-                cocheraFields.style.display = cocheraCheckbox.checked ? 'block' : 'none';
-            });
-
-            lavanderiaCheckbox.addEventListener('change', function() {
-                lavanderiaFields.style.display = lavanderiaCheckbox.checked ? 'block' : 'none';
-            });
-        });
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} {% load static %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Lavandería</title>
+    <title>Registro de Cochera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-
-    <script>
-        $(document).ready(function() {
-            $('#id_tipo_vehiculo, #id_tiempo').change(function() {
-                var tipoVehiculo = $('#id_tipo_vehiculo').val();
-                var tiempoSeleccionado = $('#id_tiempo').val();
-    
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "obtener_precio" %}',
-                    data: {
-                        'tipo_vehiculo': tipoVehiculo,
-                        'tiempo': tiempoSeleccionado,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        var precio;
-                        switch(tiempoSeleccionado) {
-                            case 'manana':
-                                precio = response.precio.precio_manana;
-                                break;
-                            case 'tarde':
-                                precio = response.precio.precio_tarde;
-                                break;
-                            case 'noche':
-                                precio = response.precio.precio_noche;
-                                break;
-                            case 'dia_completo':
-                                precio = response.precio.precio_dia_completo;
-                                break;
-                            default:
-                                precio = 'Precio no disponible';
-                        }
-                        console.log("Precio recibido:", precio);
-                        $('#id_precio').val(precio);
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log('Error al obtener el precio:', errorThrown);
-                    }
-                });
-            });
-        });
-    </script>
-   
-    <style>
-        /* Estilos para el formulario */
-        .form-container {
-            max-width: auto;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-        }
-
-        /* Estilos para los campos */
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-check-input {
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-
-        /* Estilos para el botón */
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-    </style>
-
+    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+    <script src="{% static 'js/registro.js' %}"></script>
 </head>
 <body>
     {% include 'layouts/navbar.html' %}
     {% include 'layouts/sidebar.html' %}
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-
-
-        <h5 class="card-title">REGISTRO DE ESTACIONAMIENTO</h5>
+        <h5 class="card-title mt-3 mb-3"><i class="fas fa-clipboard-list"></i> REGISTRO</h5>
 
         <div class="form-container">
-                        
-            <form method="post" id="lavanderia-form">
-                {% csrf_token %}
-                
-                <div class="row">
-                <!-- Conductor -->
-                    <div class="col-md-6 border-right">
 
+            <form method="post" id="cochera-form"> 
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Conductor -->
+                    <div class="col-md-6 border-right">
                         <div class="form-group">
                             <label for="dni">DNI:</label>
                             <input type="text" class="form-control" id="dni" name="dni" maxlength="8">
@@ -205,8 +41,6 @@
                             <input type="text" class="form-control" id="apellidos" name="apellidos" readonly>
                         </div>
 
-                  
-
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_telefono">Teléfono:</label>
@@ -218,11 +52,20 @@
                             </div>
                         </div>
 
+                        <div class="row " style="margin-left: 10px;">
+                            <div class="form-group form-check col-md-2">
+                                <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavanderia">
+                                <label class="form-check-label" for="id_lavadero">Lavadero</label>
+                            </div>
+                            <div class="form-group form-check col-md-2">
+                                <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
+                                <label class="form-check-label" for="id_cochera">Cochera</label>
+                            </div>
+                        </div>
                     </div>
-        
+                    
                     <!-- Vehículo -->
                     <div class="col-md-6 border-right">
-
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_placa">Placa:</label>
@@ -261,78 +104,89 @@
                             {{ vehiculo_form.propietario }}
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Lavandería -->
-                
-                 <div class="row " style="margin-left: 10px;">
-                    <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero">
-                        <label class="form-check-label" for="id_lavadero">Lavadero</label>
-                    </div>
-                    <div class="form-group form-check col-md-2">
-                        <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
-                        <label class="form-check-label" for="id_cochera">Cochera</label>
-                    </div>
-                </div>
-
+                <!-- Cochera -->
                 <div class="row">
-
-               
-
-                    <div class="form-group col-md-2">
-                        <label for="id_tipo_vehiculo">Tipo de Vehículo:</label>
-                        <select class="form-control" id="id_tipo_vehiculo" name="tipo_vehiculo">
-                            {% for tipo in tipos_vehiculo %}
-                                <option value="{{ tipo }}">{{ tipo }}</option>
+                    <div class="form-group form-check col-md-2">
+                        <label for="tarifa_vehiculo">Tarifa del Vehículo:</label>
+                        <select name="tarifa_vehiculo" id="tarifa_vehiculo" required>
+                            {% for tarifa in tarifas_vehiculo %}
+                                <option value="{{ tarifa.id }}" 
+                                        data-precio-manana="{{ tarifa.precio_manana }}"
+                                        data-precio-tarde="{{ tarifa.precio_tarde }}"
+                                        data-precio-noche="{{ tarifa.precio_noche }}"
+                                        data-precio-dia-completo="{{ tarifa.precio_dia_completo }}">
+                                    {{ tarifa.tipo_vehiculo }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="form-group col-md-2">
-                        <label for="id_tiempo">Tiempo:</label>
-                        <select class="form-control" id="id_tiempo" name="tiempo">
+                    <div class="form-group form-check col-md-2">
+                        <label for="tiempo">Tiempo del Día:</label>
+                        <select name="tiempo" id="tiempo" required>
                             <option value="manana">Mañana</option>
                             <option value="tarde">Tarde</option>
                             <option value="noche">Noche</option>
                             <option value="dia_completo">Día Completo</option>
                         </select>
                     </div>
-                    
-             
 
-
-                    <div class="form-group col-md-2">
-                        <label for="id_precio">Precio:</label>
-                        {{ lavanderia_form.precio }}
+                    <div class="form-group form-check col-md-2">
+                        <label for="precio">Precio:</label>
+                        <input type="text" id="precio" name="precio" readonly>
                     </div>
 
-                    <!-- Botón de enviar -->
-
-                    <div class="form-group col-md-6 text-right " >
+                    <div class="form-group col-md-6 text-right">
                         <button type="submit" class="btn-submit">Registrar</button>
                     </div>
-
                 </div>
-                
+            </form>
 
-               
-
-            </form> 
         </div>
+    </main>
 
-
-
-
-
-
-
-
-
-
-
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tarifaSelect = document.getElementById('tarifa_vehiculo');
+            const tiempoSelect = document.getElementById('tiempo');
+            const precioInput = document.getElementById('precio');
+        
+            // Función para manejar el evento de cambio en los select
+            function handleSelectChange() {
+                const tarifaOption = tarifaSelect.options[tarifaSelect.selectedIndex];
+                const tiempo = tiempoSelect.value;
+        
+                // Obtener el precio correspondiente del elemento seleccionado
+                let precio;
+                switch (tiempo) {
+                    case 'manana':
+                        precio = tarifaOption.dataset.precioManana;
+                        break;
+                    case 'tarde':
+                        precio = tarifaOption.dataset.precioTarde;
+                        break;
+                    case 'noche':
+                        precio = tarifaOption.dataset.precioNoche;
+                        break;
+                    case 'dia_completo':
+                        precio = tarifaOption.dataset.precioDiaCompleto;
+                        break;
+                    default:
+                        precio = 'Error: Tiempo del día inválido';
+                }
+        
+                // Actualizar el campo de precio con el valor obtenido
+                precioInput.value = precio;
+            }
+        
+            // Agregar eventos de cambio a los select
+            tarifaSelect.addEventListener('change', handleSelectChange);
+            tiempoSelect.addEventListener('change', handleSelectChange);
+        });
+    </script>
+    
     <script>
         $(document).ready(function(){
             $('#dni').on('input', function(){
@@ -361,6 +215,9 @@
         });
     </script>
 
-    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html> {% endcomment %}
+</html>
+
+

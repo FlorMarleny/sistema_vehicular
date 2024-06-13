@@ -116,12 +116,6 @@
                                         <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
                                     </div>
 
-
-                                    {% comment %} <div class="form-group col-md-4 text-right">
-                                        <button type="submit" class="btn-submit" id="boton_pagar">Ir a Pagar</button>
-                                    </div> {% endcomment %}
-
-
                                 </div>
                             </form>
 
@@ -157,9 +151,6 @@
 
         document.getElementById('efectivo').addEventListener('input', calcularVuelto);
 
-
-
-
         document.getElementById('boton_pagar').addEventListener('click', function() {
             calcularVuelto(); 
             var nuevaVentana = window.open('', '_blank');
@@ -170,6 +161,9 @@
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Ticket</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                
                     <style>
                         body {
                             font-family: Arial, sans-serif;
@@ -190,22 +184,40 @@
                     </style>
                 </head>
                 <body>
-                    <div class="ticket-container">
-                        <h5>Detalles de Salida</h5>
-                        <p>Placa: {{ lavanderia.vehiculo.placa }}</p>
-                        <p>Conductor: {{ lavanderia.conductor.nombres }} {{ lavanderia.conductor.apellidos }}</p>
-                        <p>Fecha y Hora de Entrada: {{ lavanderia.fecha_hora_entrada }}</p>
-                        <p>Fecha y Hora de Salida: <span id="ticket_fecha_hora_salida">{{ lavanderia.fecha_hora_salida|date:"d/m/Y H:i:s" }}</span></p>
+                    <div class="container border">
+
+                        <div class="text-center">
+                            <h2 class="font-weight-bold mb-4">TICKET DE SALIDA</h2>
+                            <h4 class="mb-3">ESTACIÓN DE RUTA TIPO II</h4>
+                            <h4>"SAN PABLO"</h4>
+                        </div>
+                
+                        <p>Placa: </p>
+                        <h1>{{ lavanderia.vehiculo.placa }} </h1>
+                        <hr>
                         <p>Tipo de Vehículo: {{ lavanderia.tarifa_vehiculo.tipo_vehiculo }}</p>
+                        <hr>
+                
+                        <p>Fecha y Hora de Entrada: {{ lavanderia.fecha_hora_entrada }}</p>
+                        <hr>
+                
+                        <p>Fecha y Hora de Salida: <span id="ticket_fecha_hora_salida">{{ lavanderia.fecha_hora_salida|date:"d/m/Y H:i:s" }}</span></p>
+                        <hr>
+                
                         <p>Tiempo: {{ lavanderia.tiempo }}</p>
-                        {% if lavanderia.lavadero %}
-                        <p>Precio por Lavado: S/ {{ lavanderia.tarifa_vehiculo.precio_lavado }}</p>
-                        {% endif %}
-                        {% if lavanderia.cochera %}
-                        <p>Precio por Cochera: S/ {{ lavanderia.precio_cochera }}</p>
-                        {% endif %}
-                        <p>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</p>
+                        <hr>
+                
+                        <h3>Total a pagar: S/ {{ lavanderia.total_a_pagar }}</h3> 
+                
+                        <div class="text-center">
+                            <h5>Estación de Ruta Tipo II</h5>
+                            <p> Gracias por su preferencia.</p>
+                        </div>
+                
+                        {% comment %} <img src="{{ lavanderia.codigo_barras }}" alt="Código de Barras"> {% endcomment %}
+                
                     </div>
+
                 </body>
                 </html>
             `);
@@ -217,28 +229,6 @@
                 this.print();
             };
         });
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         function actualizarFechaHoraSalida() {
             var fechaHoraSalidaElemento = document.getElementById('fecha_hora_salida');
@@ -254,16 +244,6 @@
       
     </script>
     
-
-
-    <script > 
-
-       
-       
-
-    </script>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

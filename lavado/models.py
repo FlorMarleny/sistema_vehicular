@@ -10,7 +10,8 @@ class Conductor(models.Model):
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     correo = models.EmailField()
-
+    def __str__(self):
+        return f"{self.nombres} {self.apellidos}"
 
 class Vehiculo(models.Model):
     placa = models.CharField(max_length=10)
@@ -20,7 +21,8 @@ class Vehiculo(models.Model):
     color = models.CharField(max_length=50)
     serie = models.CharField(max_length=50)
     propietario = models.CharField(max_length=100)
-
+    def __str__(self):
+        return self.placa
 
 class Lavanderia(models.Model):
     ESTADOS = (
@@ -28,10 +30,10 @@ class Lavanderia(models.Model):
         ('terminada', 'Terminada'),
     )
    
-
     tarifa_vehiculo = models.ForeignKey(TarifaVehiculo, on_delete=models.CASCADE)
     conductor = models.ForeignKey(Conductor, on_delete=models.CASCADE)
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    
     lavadero = models.BooleanField(default=False)
     cochera = models.BooleanField(default=False)
     total_a_pagar = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -73,15 +75,6 @@ class Lavanderia(models.Model):
         # Llamar al método save() original para guardar el objeto
         super().save(*args, **kwargs)
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+    def __str__(self):
+        return f"Lavandería - {self.vehiculo.placa}"
   
