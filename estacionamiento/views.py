@@ -126,9 +126,8 @@ def eliminar_cochera(request, id):
 
 def acceder_salida_cochera(request):
     if request.method == 'GET':
-        cochera_id = request.GET.get('cochera_id')
+        cochera_id = request.GET.get('id')
         cochera = get_object_or_404(Cochera, id=cochera_id)
-
         return render(request, 'salidas/acceder_salida_cochera.html', {'cochera': cochera})
 
     elif request.method == 'POST':

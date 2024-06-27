@@ -277,23 +277,118 @@ def eliminar_lavanderia(request, id):
     # Si no es una solicitud POST, devuelve un error
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+# def salidas(request):
+#     if request.method == 'GET':
+#         numero_dni = request.GET.get('numero_dni', '')
+
+#         if not numero_dni:
+#             return render(request, 'salidas/salidas.html', {'error': 'Ingrese un número de DNI para realizar la búsqueda'})
+#         resultados = Lavanderia.objects.filter(
+#             conductor__dni=numero_dni).order_by('-fecha_hora_entrada')
+#         return render(request, 'salidas/salidas.html', {'resultados': resultados})
+
+#     return HttpResponseBadRequest("Método no permitido")
+
+
+# from django.shortcuts import render
+# from django.http import HttpResponseBadRequest
+# from .models import Lavanderia 
+# from estacionamiento.models import Cochera
+
+# def salidas(request):
+#     if request.method == 'GET':
+#         numero_dni = request.GET.get('numero_dni', '')
+
+#         if not numero_dni:
+#             return render(request, 'salidas/salidas.html', {'error': 'Ingrese un número de DNI para realizar la búsqueda'})
+
+#         lavanderia_resultados = Lavanderia.objects.filter(conductor__dni=numero_dni)
+#         cochera_resultados = Cochera.objects.filter(conductor__dni=numero_dni)
+#         resultados_combinados = list(lavanderia_resultados) + list(cochera_resultados)
+#         resultados_ordenados = sorted(resultados_combinados, key=lambda x: x.fecha_hora_entrada, reverse=True)
+
+#         return render(request, 'salidas/salidas.html', {
+#             'resultados': resultados_ordenados,
+#         })
+
+#     return HttpResponseBadRequest("Método no permitido")
+
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.urls import reverse
+from django.db.models import Q
+from .models import Vehiculo
+from estacionamiento.models import Cochera 
+
 def salidas(request):
     if request.method == 'GET':
         numero_dni = request.GET.get('numero_dni', '')
 
         if not numero_dni:
             return render(request, 'salidas/salidas.html', {'error': 'Ingrese un número de DNI para realizar la búsqueda'})
-        resultados = Lavanderia.objects.filter(
-            conductor__dni=numero_dni).order_by('-fecha_hora_entrada')
-        return render(request, 'salidas/salidas.html', {'resultados': resultados})
+
+        # Filtrar resultados de Lavanderia y Cochera por el DNI
+        lavanderia_resultados = Lavanderia.objects.filter(conductor__dni=numero_dni).order_by('-fecha_hora_entrada')
+        cochera_resultados = Cochera.objects.filter(conductor__dni=numero_dni).order_by('-fecha_hora_entrada')
+
+        combinados = {}
+
+        # Función para redondear las fechas al segundo
+        def round_to_second(dt):
+            return dt.replace(microsecond=0)
+
+        # Procesar resultados de Lavanderia
+        for lav in lavanderia_resultados:
+            llave = (round_to_second(lav.fecha_hora_entrada), lav.conductor.dni)
+
+            if llave in combinados:
+                combinados[llave]['servicio'] += ' y Lavadero'
+                combinados[llave]['total_a_pagar'] += lav.total_a_pagar
+            else:
+                combinados[llave] = {
+                    'conductor': lav.conductor,
+                    'vehiculo': lav.vehiculo,  # Solo un vehículo por Lavanderia
+                    'fecha_hora_entrada': lav.fecha_hora_entrada,
+                    'fecha_hora_salida': lav.fecha_hora_salida,
+                    'servicio': 'Lavadero',
+                    'total_a_pagar': lav.total_a_pagar,
+                   'estado': lav.estado,  # Asegúrate de incluir el estado
+                    'id': lav.id,  # Incluir el ID para usar en el enlace
+                }
+
+        # Procesar resultados de Cochera
+        for coch in cochera_resultados:
+            llave = (round_to_second(coch.fecha_hora_entrada), coch.conductor.dni)
+            if llave in combinados:
+                combinados[llave]['servicio'] += ' y Cochera'
+                combinados[llave]['total_a_pagar'] += coch.total_a_pagar
+            else:
+                combinados[llave] = {
+                    'conductor': coch.conductor,
+                    'vehiculo': coch.vehiculo,  # Solo un vehículo por Cochera
+                    'fecha_hora_entrada': coch.fecha_hora_entrada,
+                    'fecha_hora_salida': coch.fecha_hora_salida,
+                    'servicio': 'Cochera',
+                    'total_a_pagar': coch.total_a_pagar,
+                    'estado': coch.estado,  # Asegúrate de incluir el estado
+                    'id': coch.id,  # Incluir el ID para usar en el enlace
+                }
+
+        # Convertir el diccionario en una lista de resultados combinados
+        resultados_combinados = list(combinados.values())
+
+        # Imprimir los resultados combinados para depuración
+        print("Resultados combinados:", resultados_combinados)
+
+        return render(request, 'salidas/salidas.html', {'resultados': resultados_combinados})
 
     return HttpResponseBadRequest("Método no permitido")
 
-def acceder_salida(request):
-    if request.method == 'GET':
-        lavanderia_id = request.GET.get('lavanderia_id')
-        lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
 
+def acceder_salida(request):
+    if request.method == 'GET':        
+        lavanderia_id = request.GET.get('id')
+        lavanderia = get_object_or_404(Lavanderia, id=lavanderia_id)
         return render(request, 'salidas/accedersalida.html', {'lavanderia': lavanderia})
 
     elif request.method == 'POST':
