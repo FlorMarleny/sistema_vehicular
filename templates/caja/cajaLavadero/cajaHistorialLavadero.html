@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Caja - Lavandería</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+    {% include 'layouts/sidebar.html' %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="mt-5">
+            <h2>Historial de Caja - Lavandería</h2>
+            {% comment %} <div class="text-left mt-3">
+                <a href="{% url 'historial_caja_cochera' %}" class="btn btn-danger" style="background-color: #CB705D;">Reporte de Cochera</a>
+                <a href="{% url 'historial_caja_lavanderia' %}" class="btn btn-danger" style="background-color: #CB705D;">Reporte de Lavandería</a>
+            </div> {% endcomment %}
+            <table class="table table-striped mt-3">
+                <thead style="background-color: #4568dc;">
+                    <tr>
+                        <th></th>
+                        <th style="color: white;"> ID de Caja</th>
+                        <th style="color: white;">Total Cerrado</th>
+                        <th style="color: white;">Fecha de Cierre</th>
+                        <th style="color: white;">Tipo de Usuario</th>
+                        <th style="color: white;">Nombre de Usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for historial in historiales %}
+                        <tr>
+                            <td><a href="{% url 'detalle_caja' historial.pk %}"><i class="fas fa-arrow-right"></i></a></td>
+                            {% comment %} <td><a href="{% url 'detalle_caja' id=historial.id %}"><i class="fas fa-arrow-right"></i></a></td> {% endcomment %}
+                            {% comment %} <td><i class="fas fa-arrow-right"></i> </td> {% endcomment %}
+                            <td > {{ historial.id }}</td>
+                            <td>{{ historial.monto_transaccion }}</td>
+                            <td>{{ historial.fecha_hora_transaccion }}</td>
+                            <td>{{ historial.tipo_usuario }}</td>
+                            <td>{{ historial.usuario.username }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Total Ingresos: {{ total_ingresos }}</h3>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

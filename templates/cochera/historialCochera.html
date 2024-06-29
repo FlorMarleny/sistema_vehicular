@@ -24,10 +24,17 @@
                         </div>
                         <div class="col-md-6">
                             <div class="container mt-5 mb-3 ">
+
                                 <form method="GET" action="{% url 'historial_lavanderia' %}" class="form-inline my-2 my-lg-0 justify-content-end">
                                     <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar" name="q">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                                    <button class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">Buscar</button>
+
+                                    <a href="{% url 'generar_pdf' %}" class="btn btn-success my-2 my-sm-0" style="background-color: #45B649; border-color: #45B649;">
+                                        <i class="fas fa-file-pdf"></i> Descargar PDF
+                                    </a>
+
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -51,7 +58,7 @@
                                     <td>{{ cochera.tarifa_vehiculo.tipo_vehiculo }}</td>
                                     <td>{{ cochera.conductor.dni }}</td>
                                     <td>{{ cochera.conductor.nombres }} {{ cochera.conductor.apellidos }}</td>
-                                    <td>{{ cochera.precio_cochera }}</td>
+                                    <td>S/.{{ cochera.precio_cochera }}</td>
 
                                     <td>
                                         {% if cochera.estado != 'terminada' %}

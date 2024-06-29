@@ -97,9 +97,24 @@
             </a>
             <div class="collapse" id="submenu-caja">
               <ul class="nav flex-column">
+
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'cajaGeneral' %} "> Caja  </a>
+                  <a class="nav-link text-white" href="{% url 'caja_login' %} "> Caja  </a>
+                </li> 
+
+                {% comment %} <li class="nav-item">
+                  {% if user.is_authenticated %}
+                      <a class="nav-link text-white" href="{% url 'cajaGeneral' %}">Caja</a>
+                  {% else %}
+                      <a class="nav-link text-white" href="{% url 'caja_login' %}">Ingresar a Caja</a>
+                  {% endif %}
                 </li>
+ {% endcomment %}
+
+
+
+
+
                
                 <li class="nav-item">
                   <a class="nav-link text-white" href="{% url 'registrar_tarifa_vehiculo' %}">Registrar Tarifa</a>

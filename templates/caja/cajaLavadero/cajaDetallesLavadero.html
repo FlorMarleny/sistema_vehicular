@@ -1,0 +1,85 @@
+<!-- cajaDetallesLavadero.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Caja</title>
+</head>
+<body>
+    <h1>Detalle de Caja</h1>
+    <p>ID de Caja: {{ caja.id }}</p>
+    <p>Tipo: {{ caja.tipo }}</p>
+    <p>Fecha y Hora de Transacción: {{ caja.fecha_hora_transaccion }}</p>
+    <p>Monto de la Transacción: {{ caja.monto_transaccion }}</p>
+    <p>Usuario: {{ caja.usuario.username }}</p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Caja</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                {% comment %} <h2>Detalles de Caja</h2>
+                <hr>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>ID de Caja:</h5>
+                                <p>{{ caja.id }}</p>
+                                <h5>Tipo de Transacción:</h5>
+                                <p>{{ caja.tipo }}</p>
+                                <h5>Fecha y Hora de Transacción:</h5>
+                                <p>{{ caja.fecha_hora_transaccion }}</p>
+                                <h5>Monto de Transacción:</h5>
+                                <p>{{ caja.monto_transaccion }}</p>
+                                <h5>Estado de Cierre:</h5>
+                                <p>{{ caja.cerrada }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Aquí puedes agregar más detalles según sea necesario -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'cajas_cerradas' %}" class="btn btn-primary mt-3">Volver a Cajas Cerradas</a> {% endcomment %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

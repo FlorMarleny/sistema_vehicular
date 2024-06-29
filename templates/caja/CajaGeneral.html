@@ -30,9 +30,15 @@
 
         </div>
         
-        <div class="text-left mt-3">
+        {% comment %} <div class="text-left mt-3">
             <button type="button" class="btn btn-danger"  style="background-color: #CB705D;">Reporte General de Caja</button>
+        </div> {% endcomment %}
+
+        <div class="text-left mt-3">
+            <button type="button" class="btn btn-danger" style="background-color: #CB705D;">Reporte General de Caja</button>
+            <a href="{% url 'historial_caja_lavanderia' %}" class="btn btn-danger ml-2" style="background-color: #CB705D;">Historial Caja Lavandería</a>
         </div>
+        
 
     </main>
 

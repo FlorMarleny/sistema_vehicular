@@ -1,8 +1,12 @@
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from estacionamiento.forms import CocheraForm, ConductorForm, VehiculoForm
 from .models import Cochera
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from tarifas_vehiculos.models import TarifaVehiculo
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -149,3 +153,43 @@ def acceder_salida_cochera(request):
             return HttpResponseBadRequest("Datos inválidos.")
 
     return HttpResponseBadRequest("Método no permitido.")
+
+def generar_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="registro_cochera.pdf"'
+
+    registros = Cochera.objects.all()
+
+    # Crear un objeto Story (flujo) para contener todos los elementos del PDF
+    story = []
+
+    # Definir el estilo de la tabla
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Encabezado de fondo
+        # Alineación centrada para todas las celdas
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Líneas de la cuadrícula
+    ])
+
+    # Crear una lista de datos para la tabla
+    data = [['Vehículo', 'Conductor', 'Fecha de Entrada', 'Fecha de Salida']]
+
+    # Llenar la lista de datos con los registros
+    for registro in registros:
+        data.append([
+            registro.vehiculo,
+            registro.conductor,
+            str(registro.fecha_hora_entrada),
+            str(registro.fecha_hora_salida) if registro.fecha_hora_salida else '',
+        ])
+
+    # Crear la tabla y aplicar el estilo
+    tabla = Table(data)
+    tabla.setStyle(style)
+    story.append(tabla)
+
+    # Crear el documento PDF y agregar el flujo de elementos (Story)
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    doc.build(story)
+
+    return response
