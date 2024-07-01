@@ -1,74 +1,73 @@
-{% load static %}
+{% extends 'layout.html' %} {% load static %} {% block main %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caja Lavadero</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
-    <script src="{% static 'js/registro.js' %}"></script>
-</head>
-<body>
-    {% include 'layouts/navbar.html' %}
-    {% include 'layouts/sidebar.html' %}
 
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 ">
-        
-        <h5 class="card-title mt-3 mb-3"><i class="fas fa-boxes"></i> CAJA COCHERA</h5>
-
-        <div class="form-container p-2"  style="background-color: #D9D9D9;">
-          
-          
-          <form id="cerrarCajaForm" method="post" action="{% url 'cerrar_caja_lavanderia' %}">
-            {% csrf_token %}
-            <input type="hidden" name="total_lavanderia" value="{{ total_transacciones_lavanderia }}">
-            <div class="text-right">
-                <button id="cerrarCajaBtn" type="submit" class="btn btn-primary" style="background-color:#3E82FF;">Cerrar Caja</button>
-            </div>
-          </form>
-
-        </div>
-
-        <div class="form-container">
-       
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Placa</th>
-                <th scope="col">Vehículo</th>
-                <th scope="col">Conductor</th>
-                <th scope="col">Fecha de Salida</th>
-                <th scope="col">Total a Pagar</th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for transaccion in transacciones_terminadas_lavanderia %}
-              <tr>
-                <td>{{ transaccion.vehiculo.placa }}</td>
-                <td> {{ transaccion.tarifa_vehiculo.tipo_vehiculo }}</td>
-                <td>{{ transaccion.conductor.nombres }} {{ transaccion.conductor.apellidos }}</td>
-                <td>{{ transaccion.fecha_hora_salida }}</td>
-                <td>{{ transaccion.tarifa_vehiculo.precio_lavado }}</td>
-              </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <hr>
-        <div class="mb-3">
-          <p>Mostrando {{ transacciones_terminadas_lavanderia.count }}  </p>
-          <h2>Total: S/ {{ total_transacciones_lavanderia }}</h2>
-        </div>
-
+{% if messages %}
+  <div class="alert alert-dismissible fade show" role="alert">
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    </main>
+    {% endfor %}
+  </div>
+{% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html> 
+
+
+
+<div class="container">
+  <h5 class="card-title mt-3 mb-3">
+    <i class="fas fa-boxes"></i> CAJA COCHERA
+  </h5>
+
+  <div class="form-container p-2" style="background-color: #d9d9d9">
+    <form id="cerrarCajaForm" method="post" action="{% url 'cerrar_caja_cochera' %}">
+      {% csrf_token %}
+      
+      <input type="hidden" name="total_cochera" value="{{ total_transacciones_cochera }}" />
+      <div class="text-right">
+        <button id="cerrarCajaBtn" type="submit" class="btn btn-primary" style="background-color: #3e82ff" > Cerrar Caja </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Placa</th>
+          <th scope="col">Vehículo</th>
+          <th scope="col">Conductor</th>
+          <th scope="col">Fecha de Salida</th>
+          <th scope="col">Total a Pagar</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {% for transaccion in transacciones_terminadas_cochera %}
+        <tr>
+          
+          <td>{{ transaccion.vehiculo.placa }}</td>
+          <td>{{ transaccion.tarifa_vehiculo.tipo_vehiculo }}</td>
+          <td>
+            {{ transaccion.conductor.nombres }} {{ transaccion.conductor.apellidos }}
+          </td>
+          <td>{{ transaccion.fecha_hora_salida }}</td>
+          <td>{{ transaccion.precio_cochera}}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+    <hr />
+    <div class="mb-3">
+      <p>Mostrando {{ transacciones_terminadas_cochera.count }}</p>
+      <h2>Total: S/ {{ total_transacciones_cochera }}</h2>
+    </div>
+  </div>
+
+  {% endblock %}
+</div>

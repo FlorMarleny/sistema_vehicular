@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/registro.css' %}">
     <script src="{% static 'js/registro.js' %}"></script>
+    
 </head>
 <body>
     {% include 'layouts/navbar.html' %}
@@ -19,32 +20,55 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h5 class="card-title mt-3 mb-3"><i class="fas fa-clipboard-list"></i> REGISTRO</h5>
 
-        <div class="form-container">
+<!-- Bloque de mensajes -->
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+        <div class="form-container mt-3">
                         
             <form method="post" id="lavanderia-form">
                 {% csrf_token %}
                 
                 <div class="row">
+
                 <!-- Conductor -->
                     <div class="col-md-6 border-right">
 
-                        {% comment %} <h5><i class="fas fa-user"></i> Conductor</h5> {% endcomment %}
+                        <h5 class="card-title mt-3 mb-3 "><i class="fas fa-user"></i> CONDUCTOR</h5>
+                        <hr>
 
                         <div class="form-group">
                             <label for="dni">DNI:</label>
                             <input type="text" class="form-control" id="dni" name="dni" maxlength="8">
                         </div>
-                        <div class="form-group">
-                            <label for="nombres">Nombres:</label>
-                            <input type="text" class="form-control" id="nombres" name="nombres" readonly>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nombres">Nombres:</label>
+                                    <input type="text" class="form-control" id="nombres" name="nombres" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="apellidos">Apellidos:</label>
+                                    <input type="text" class="form-control" id="apellidos" name="apellidos" readonly>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="apellidos">Apellidos:</label>
-                            <input type="text" class="form-control" id="apellidos" name="apellidos" readonly>
-                        </div>
-
+                        
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="id_telefono">Teléfono:</label>
@@ -56,7 +80,8 @@
                             </div>
                         </div>
 
-                        <div class="row " style="margin-left: 10px;">
+                       
+                        <div class="row" style="margin-left: 10px;">
                             <div class="form-group form-check col-md-2">
                                 <input type="checkbox" class="form-check-input" id="id_lavadero" name="lavadero">
                                 <label class="form-check-label" for="id_lavadero">Lavadero</label>
@@ -65,13 +90,16 @@
                                 <input type="checkbox" class="form-check-input" id="id_cochera" name="cochera">
                                 <label class="form-check-label" for="id_cochera">Cochera</label>
                             </div>
-                        </div>
+                        </div>                        
 
                     </div>
         
                     
                     <!-- Vehículo -->
                     <div class="col-md-6 border-right">
+
+                        <h5 class="card-title mt-3 mb-3 "><i class="fas fa-car"></i> VEHICULO</h5>
+                        <hr>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -85,25 +113,17 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="id_marca">Marca:</label>
-                                {{ vehiculo_form.marca }}
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="id_matricula">Matrícula:</label>
-                                {{ vehiculo_form.matricula }}
-                            </div>
-                        </div>
-
-                        <div class="form-row">
+                         
                             <div class="form-group col-md-6">
                                 <label for="id_color">Color:</label>
                                 {{ vehiculo_form.color }}
                             </div>
+
                             <div class="form-group col-md-6">
-                                <label for="id_serie">Serie:</label>
-                                {{ vehiculo_form.serie }}
+                                <label for="id_marca">Marca:</label>
+                                {{ vehiculo_form.marca }}
                             </div>
+                            
                         </div>
 
                         <div class="form-group">
@@ -111,15 +131,12 @@
                             {{ vehiculo_form.propietario }}
                         </div>
 
-
                     </div>
 
-                    
                 </div>
-
-                <!-- Lavandería -->
-                <div class="row">
-
+                
+                <!-- Lavandería - Lavadero -->
+                <div class="row lavadero-fields d-none">
                     <div class="form-group form-check col-md-2">
                         <label for="tarifa_vehiculo">Tarifa del Vehículo:</label>
                         <select name="tarifa_vehiculo" id="tarifa_vehiculo" required>
@@ -134,7 +151,31 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="form-group form-check col-md-2">
+                        <label for="precio">Precio:</label>
+                        <input type="text" id="precio" name="precio" readonly>
+                    </div>
+                    <div class="form-group col-md-6 text-right">
+                        <button type="submit" class="btn btn-success" style="background-color: #cb705d; border-color: #cb705d; color: white; width: 150px;"> Registrar <i class="fas fa-save"></i> </button>
+                    </div>
+                </div>
 
+                <!-- Lavandería - Cochera -->
+                <div class="row cochera-fields d-none">
+                    <div class="form-group form-check col-md-2">
+                        <label for="tarifa_vehiculo_cochera">Tarifa del Vehículo:</label>
+                        <select name="tarifa_vehiculo_cochera" id="tarifa_vehiculo_cochera" required>
+                            {% for tarifa in tarifas_vehiculo %}
+                                <option value="{{ tarifa.id }}" 
+                                        data-precio-manana="{{ tarifa.precio_manana }}"
+                                        data-precio-tarde="{{ tarifa.precio_tarde }}"
+                                        data-precio-noche="{{ tarifa.precio_noche }}"
+                                        data-precio-dia-completo="{{ tarifa.precio_dia_completo }}">
+                                    {{ tarifa.tipo_vehiculo }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="form-group form-check col-md-2">
                         <label for="tiempo">Tiempo del Día:</label>
                         <select name="tiempo" id="tiempo" required>
@@ -143,26 +184,23 @@
                             <option value="noche">Noche</option>
                             <option value="dia_completo">Día Completo</option>
                         </select>
-                    </div>
-
+                    </div> 
                     <div class="form-group form-check col-md-2">
-                        <label for="precio">Precio:</label>
-                        <input type="text" id="precio" name="precio" readonly>
+                        <label for="precio_cochera">Precio:</label>
+                        <input type="text" id="precio_cochera" name="precio_cochera" readonly>
                     </div>
-
-                    <div class="form-group col-md-6 text-right " >
-                        <button type="submit" class="btn-submit">Registrar</button>
+                    <div class="form-group col-md-6 text-right">
+                        <button type="submit" class="btn btn-success" style="background-color: #cb705d; border-color: #cb705d; color: white; width: 150px;"> Registrar <i class="fas fa-save"></i> </button>
                     </div>
-
                 </div>
-                
+
             </form> 
 
         </div>
 
     </main>
 
-
+{% comment %} 
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -204,9 +242,10 @@
         });
             
     </script>
-    
+     {% endcomment %}
 
     <script>
+
         $(document).ready(function(){
             $('#dni').on('input', function(){
                 var dni = $(this).val();
@@ -231,8 +270,91 @@
                     $('#apellidos').val('');
                 }
             });
+
+   
+            $('#id_cochera, #id_lavadero').change(function() {
+                var isCocheraChecked = $('#id_cochera').is(':checked');
+                var isLavaderoChecked = $('#id_lavadero').is(':checked');
+
+                if (isCocheraChecked && !isLavaderoChecked) {
+                    $('.cochera-fields').removeClass('d-none');
+                    $('.lavadero-fields').addClass('d-none');
+                } else if (isLavaderoChecked && !isCocheraChecked) {
+                    $('.lavadero-fields').removeClass('d-none');
+                    $('.cochera-fields').addClass('d-none');
+                } else if (isCocheraChecked && isLavaderoChecked) {
+                    $('.cochera-fields').removeClass('d-none');
+                    $('.lavadero-fields').addClass('d-none');
+                } else {
+                    $('.cochera-fields').addClass('d-none');
+                    $('.lavadero-fields').addClass('d-none');
+                }
+            });
+
+            $('#tarifa_vehiculo, #tiempo').change(function() {
+                const tarifaSelect = $('#tarifa_vehiculo');
+                const tiempoSelect = $('#tiempo');
+                const precioInput = $('#precio');
+        
+                const tarifaOption = tarifaSelect.find(':selected');
+                const tiempo = tiempoSelect.val();
+
+                let precio;
+                switch (tiempo) {
+                    case 'manana':
+                        precio = tarifaOption.data('precio-manana');
+                        break;
+                    case 'tarde':
+                        precio = tarifaOption.data('precio-tarde');
+                        break;
+                    case 'noche':
+                        precio = tarifaOption.data('precio-noche');
+                        break;
+                    case 'dia_completo':
+                        precio = tarifaOption.data('precio-dia-completo');
+                        break;
+                    default:
+                        precio = 'Error: Tiempo del día inválido';
+                }
+
+                precioInput.val(precio);
+            });
+
+            $('#tarifa_vehiculo_cochera, #tiempo').change(function() {
+                const tarifaSelect = $('#tarifa_vehiculo_cochera');
+                const tiempoSelect = $('#tiempo');
+                const precioInput = $('#precio_cochera');
+        
+                const tarifaOption = tarifaSelect.find(':selected');
+                const tiempo = tiempoSelect.val();
+
+                let precio;
+                switch (tiempo) {
+                    case 'manana':
+                        precio = tarifaOption.data('precio-manana');
+                        break;
+                    case 'tarde':
+                        precio = tarifaOption.data('precio-tarde');
+                        break;
+                    case 'noche':
+                        precio = tarifaOption.data('precio-noche');
+                        break;
+                    case 'dia_completo':
+                        precio = tarifaOption.data('precio-dia-completo');
+                        break;
+                    default:
+                        precio = 'Error: Tiempo del día inválido';
+                }
+
+                precioInput.val(precio);
+            });
+
         });
+        
     </script>
+
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

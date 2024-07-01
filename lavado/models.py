@@ -4,36 +4,39 @@ from django.utils import timezone
 import barcode
 from barcode.writer import ImageWriter
 
+
 class Conductor(models.Model):
     dni = models.CharField(max_length=8)
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     correo = models.EmailField()
+
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
+
 
 class Vehiculo(models.Model):
     placa = models.CharField(max_length=10)
     modelo = models.CharField(max_length=100)
     marca = models.CharField(max_length=100)
-    matricula = models.CharField(max_length=20)
     color = models.CharField(max_length=50)
-    serie = models.CharField(max_length=50)
     propietario = models.CharField(max_length=100)
+
     def __str__(self):
         return self.placa
+
 
 class Lavanderia(models.Model):
     ESTADOS = (
         ('en_proceso', 'En proceso'),
         ('terminada', 'Terminada'),
     )
-   
+
     tarifa_vehiculo = models.ForeignKey(TarifaVehiculo, on_delete=models.CASCADE)
     conductor = models.ForeignKey(Conductor, on_delete=models.CASCADE)
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
-    
+
     lavadero = models.BooleanField(default=False)
     cochera = models.BooleanField(default=False)
     total_a_pagar = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -51,7 +54,7 @@ class Lavanderia(models.Model):
     def registrar_salida(self):
         self.fecha_hora_salida = timezone.now()
         self.save()
-        
+
     def calcular_total_a_pagar(self):
         total = 0
         if self.lavadero:
@@ -59,9 +62,8 @@ class Lavanderia(models.Model):
         if self.cochera:
             total += self.precio_cochera or 0
         return total
-  
+
     def save(self, *args, **kwargs):
-        # Generar y guardar el código de barras solo cuando se crea un nuevo registro
         if not self.pk:
             codigo = f'{self.vehiculo.placa}-{self.conductor.dni}-{timezone.now().strftime("%Y%m%d")}'
             ean = barcode.get_barcode_class('code128')
@@ -69,12 +71,9 @@ class Lavanderia(models.Model):
             archivo_imagen = codigo_barras.save('codigo_barras')
             self.codigo_barras = archivo_imagen
 
-        # Calcular y guardar el total a pagar
         self.total_a_pagar = self.calcular_total_a_pagar()
 
-        # Llamar al método save() original para guardar el objeto
         super().save(*args, **kwargs)
-  
+
     def __str__(self):
         return f"Lavandería - {self.vehiculo.placa}"
-  

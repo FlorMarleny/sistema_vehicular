@@ -154,6 +154,8 @@ def acceder_salida_cochera(request):
 
     return HttpResponseBadRequest("Método no permitido.")
 
+
+
 def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="registro_cochera.pdf"'

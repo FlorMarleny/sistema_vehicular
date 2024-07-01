@@ -156,46 +156,46 @@
 
     </div>
 
-</main>
+    </main>
 
-<script>
+      <script>
 
-  var ctx = document.getElementById('myPieChart').getContext('2d');
-  var myPieChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-          labels: ['Vehículos Lavado', 'Vehículos Cochera'],
-          datasets: [{
-              data: [{{ vehiculos_ingresados_lavado }}, {{ vehiculos_ingresados_cochera }}],
-              backgroundColor: ['#da4453', '#f2c94c'],
-          }]
-      },
-      options: {
-          responsive: true,
-          plugins: {
-              legend: {
-                  position: 'top',
-              },
-              tooltip: {
-                  callbacks: {
-                      label: function(context) {
-                          let label = context.label || '';
-                          if (label) {
-                              label += ': ';
-                          }
-                          if (context.parsed !== null) {
-                              label += context.parsed;
-                          }
-                          return label;
-                      }
-                  }
-              }
-          }
-      }
-  });
+        var ctx = document.getElementById('myPieChart').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Vehículos Lavado', 'Vehículos Cochera'],
+                datasets: [{
+                    data: [{{ vehiculos_ingresados_lavado }}, {{ vehiculos_ingresados_cochera }}],
+                    backgroundColor: ['#da4453', '#f2c94c'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
 
-</script>
+      </script>
 
 
 

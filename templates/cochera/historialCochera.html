@@ -1,118 +1,93 @@
+{% extends 'layout.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Lavandería</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-</head>
-<body>
-    {% include 'layouts/navbar.html' %}
-    {% include 'layouts/sidebar.html' %}
+{% block main %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="row w-100">
+            <div class="col-md-6">
+                <h4 class="mt-5 mb-3">HISTORIAL DE REGISTRO DE ESTACIONAMIENTO</h4>
+            </div>
+            <div class="col-md-6">
+                <div class="container mt-5 mb-3">
+                    <form method="GET" action="{% url 'historial_lavanderia' %}" class="form-inline my-2 my-lg-0 justify-content-end">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar" name="q">
+                        <button class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">Buscar</button>
 
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <div class="container">
-            <div class="row justify-content-center">
-
-                    <div class="row w-100">
-                        <div class="col-md-6">
-                            <h4 class="mt-5 mb-3">HISTORIAL DE REGISTRO DE ESTACIONAMIENTO</h4>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="container mt-5 mb-3 ">
-
-                                <form method="GET" action="{% url 'historial_lavanderia' %}" class="form-inline my-2 my-lg-0 justify-content-end">
-                                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar" name="q">
-                                    <button class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">Buscar</button>
-
-                                    <a href="{% url 'generar_pdf' %}" class="btn btn-success my-2 my-sm-0" style="background-color: #45B649; border-color: #45B649;">
-                                        <i class="fas fa-file-pdf"></i> Descargar PDF
-                                    </a>
-
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Placa</th>
-                                    <th>Vehículo</th>
-                                    <th>DNI</th>
-                                    <th>Conductor</th>
-                                    <th>Precio</th>
-                                    <th>Acciones</th> 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for cochera in cocheras %}
-                                <tr>
-                                    <td>{{ cochera.vehiculo.placa }}</td>
-                                    <td>{{ cochera.tarifa_vehiculo.tipo_vehiculo }}</td>
-                                    <td>{{ cochera.conductor.dni }}</td>
-                                    <td>{{ cochera.conductor.nombres }} {{ cochera.conductor.apellidos }}</td>
-                                    <td>S/.{{ cochera.precio_cochera }}</td>
-
-                                    <td>
-                                        {% if cochera.estado != 'terminada' %}
-                                            <a href="{% url 'editar_cochera' cochera.id %}" class="btn btn-primary btn-sm">Editar</a>
-                                            <a href="{% url 'detalles_cochera' cochera.id %}" class="btn btn-info btn-sm">Detalles</a>
-                                            <a href="{% url 'eliminar_cochera' cochera.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                                        {% else %}
-                                            <button class="btn btn-primary btn-sm" disabled>Editar</button>
-                                            <button class="btn btn-info btn-sm" disabled>Detalles</button>
-                                            <button class="btn btn-danger btn-sm" disabled>Eliminar</button>
-                                        {% endif %}
-                                    </td>
-
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-
-
-                        <div class="container mt-3 mb-3 d-flex justify-content-between">
-                            
-                            <div class="mb-3 ">
-                                <p>{{ cocheras|length }} registros mostrados de {{ total_registros }} totales</p>
-                            </div>
-
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center">
-                                    {% if cocheras.has_previous %}
-                                    <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
-                                    <li class="page-item"><a class="page-link" href="?page={{ cocheras.previous_page_number }}">Anterior</a></li>
-                                    {% endif %}
-                                    {% for num in cocheras.paginator.page_range %}
-                                    {% if cocheras.number == num %}
-                                    <li class="page-item active"><span class="page-link">{{ num }} <span class="sr-only">(current)</span></span></li>
-                                    {% else %}
-                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                                    {% endif %}
-                                    {% endfor %}
-                                    {% if cocheras.has_next %}
-                                    <li class="page-item"><a class="page-link" href="?page={{ cocheras.next_page_number }}">Siguiente</a></li>
-                                    <li class="page-item"><a class="page-link" href="?page={{ cocheras.paginator.num_pages }}">Última</a></li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
-
-                        </div>
-
-                    </div>
+                        <a href="{% url 'generar_pdf' %}" class="btn btn-success my-2 my-sm-0" style="background-color: #45B649; border-color: #45B649;">
+                            <i class="fas fa-file-pdf"></i> Descargar PDF
+                        </a>
+                    </form>
+                </div>
             </div>
         </div>
-    </main>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Placa</th>
+                        <th>Vehículo</th>
+                        <th>DNI</th>
+                        <th>Conductor</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cochera in cocheras %}
+                    <tr>
+                        <td>{{ cochera.vehiculo.placa }}</td>
+                        <td>{{ cochera.tarifa_vehiculo.tipo_vehiculo }}</td>
+                        <td>{{ cochera.conductor.dni }}</td>
+                        <td>{{ cochera.conductor.nombres }} {{ cochera.conductor.apellidos }}</td>
+                        <td>S/.{{ cochera.precio_cochera }}</td>
+
+                        <td>
+                            {% if cochera.estado != 'terminada' %}
+                            <a href="{% url 'editar_cochera' cochera.id %}" class="btn btn-primary btn-sm">Editar</a>
+                            <a href="{% url 'detalles_cochera' cochera.id %}" class="btn btn-info btn-sm">Detalles</a>
+                            <a href="{% url 'eliminar_cochera' cochera.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            {% else %}
+                            <button class="btn btn-primary btn-sm" disabled>Editar</button>
+                            <button class="btn btn-info btn-sm" disabled>Detalles</button>
+                            <button class="btn btn-danger btn-sm" disabled>Eliminar</button>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="container mt-3 mb-3 d-flex justify-content-between">
+                <div class="mb-3">
+                    <p>{{ cocheras|length }} registros mostrados de {{ total_registros }} totales</p>
+                </div>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if cocheras.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ cocheras.previous_page_number }}">Anterior</a></li>
+                        {% endif %}
+                        {% for num in cocheras.paginator.page_range %}
+                        {% if cocheras.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if cocheras.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ cocheras.next_page_number }}">Siguiente</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ cocheras.paginator.num_pages }}">Última</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

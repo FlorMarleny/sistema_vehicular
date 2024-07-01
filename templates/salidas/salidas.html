@@ -1,106 +1,93 @@
-{% load static %}
+{% extends 'layout.html' %} {% load static %} {% block main %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Lavandería</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<div class="container mt-5">
+    
+  <form method="GET" action="{% url 'salidas' %}">
+    <label for="numero_dni">Número de DNI:</label>
+    <input type="text" id="numero_dni" name="numero_dni" />
+    <button type="submit">Buscar</button>
+  </form>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+  {% if error %}
+  <p style="color: red">{{ error }}</p>
+  {% endif %}
 
-</head>
-<body>
-    {% include 'layouts/navbar.html' %}
-    {% include 'layouts/sidebar.html' %}
+  {% comment %} <h5>Resultados de Búsqueda</h5> {% endcomment %}
 
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead style="background-color: #4568dc">
+        <tr>
+          <th style="color: white">Conductor</th>
+          <th style="color: white">DNI</th>
+          <th style="color: white">Vehículo</th>
+          <th style="color: white">Placa</th>
+          <th style="color: white">Acceder Salida</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if resultados %}
+        <ul>
+          {% for item in resultados %}
+          <tr>
+            <td>{{ item.conductor.nombres }} {{ item.conductor.apellidos }}</td>
+            <td>{{ item.conductor.dni }}</td>
+            <td>{{ item.vehiculo.marca }} {{ item.vehiculo.modelo }}</td>
+            <td>{{ item.vehiculo.placa }}</td>
 
-        <div class="mt-5">
+            {% comment %}
+            <td>
+              {% if item.estado != 'terminada' %}
+              <a
+                href="{% url 'accedersalida' %}?lavanderia_id={{ item.id }}"
+                class="btn btn-success btn-sm"
+                >Acceder</a
+              >
+              {% else %} Salida concluida {% endif %}
+            </td>
+            {% endcomment %}
 
-            <form method="GET" action="{% url 'salidas' %}">
-                <label for="numero_dni">Número de DNI:</label>
-                <input type="text" id="numero_dni" name="numero_dni">        
-                <button type="submit">Buscar</button>
-            </form>
+            <td>
 
-            {% if error %}
-                <p style="color: red;">{{ error }}</p>
-            {% endif %}
-        
-            <h5>Resultados de Búsqueda</h5>
+              {% comment %} {% if item.estado != 'terminada' %} 
+                {% if item.servicio == 'Lavadero' %}
+                  <a href="{% url 'accedersalida' %}?id={{ item.id }}" class="btn btn-success btn-sm" >Acceder LAVADO</a>
+                {% elif item.servicio == 'Cochera' %}
+                  <a href="{% url 'acceder_salida_cochera' %}?id={{ item.id }}" class="btn btn-success btn-sm" >Acceder COCHERA</a >
+                {% endif %} 
+              {% else %} 
+                Salida concluida 
+              {% endif %} {% endcomment %}
+
+
+              {% if item.estado != 'terminada' %}
+              {% if 'Lavadero' in item.servicio and 'Cochera' in item.servicio %}
+                  <a href="{% url 'accedersalida' %}?id={{ item.id }}" class="btn btn-success">Salida de Vehículo</a>
+              {% elif 'Lavadero' in item.servicio %}
+                  <a href="{% url 'accedersalida' %}?id={{ item.id }}" class="btn btn-success">Acceder LAVADO</a>
+              {% elif 'Cochera' in item.servicio %}
+                  <a href="{% url 'acceder_salida_cochera' %}?id={{ item.id }}" class="btn btn-success">Acceder COCHERA</a>
+              {% endif %}
+          {% else %}
+              Salida concluida
+          {% endif %}
             
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead style="background-color: #4568dc;">
-                        <tr>
-                            <th style="color: white;">Conductor</th>
-                            <th style="color: white;">DNI</th>
-                            <th style="color: white;">Vehículo</th>
-                            <th style="color: white;">Placa</th>
-                            <th style="color: white;">Acceder Salida</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
 
 
-                        {% if resultados %}
-                        <h2>Resultados de Búsqueda</h2>
-                        <ul>
-                            {% for item in resultados %}
 
-                                <tr>
-                                    
-                                    <td>{{ item.conductor.nombres }} {{ item.conductor.apellidos }}</td>
-                                    <td>{{ item.conductor.dni }}</td>
-                                    <td>{{ item.vehiculo.marca }} {{ item.vehiculo.modelo }}</td>
-                                    <td>{{ item.vehiculo.placa }}</td>
 
-                                    {% comment %} <td>
-                                        {% if item.estado != 'terminada' %}
-                                            <a href="{% url 'accedersalida' %}?lavanderia_id={{ item.id }}" class="btn btn-success btn-sm">Acceder</a>
-                                        {% else %}
-                                            Salida concluida
-                                        {% endif %}
-                                    </td> {% endcomment %}
+            </td>
+          </tr>
 
-                                    <td>
-                                        {% if item.estado != 'terminada' %}
-                                            {% if item.servicio == 'Lavadero' %}
-                                                <a href="{% url 'accedersalida' %}?id={{ item.id }}" class="btn btn-success btn-sm">Acceder LAVADO</a>
-                                            {% elif item.servicio == 'Cochera' %}
-                                                <a href="{% url 'acceder_salida_cochera' %}?id={{ item.id }}" class="btn btn-success btn-sm">Acceder COCHERA</a>
-                                            {% endif %}
-                                        {% else %}
-                                            Salida concluida
-                                        {% endif %}
-                                    </td>
-                                    
+          {% endfor %}
+        </ul>
 
-                                </tr>
-
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                        
-                    </tbody>
-                </table>
-            </div>
-
+        {% endif %}
         
-        </div>
-      
-        
+      </tbody>
+      <h6 style="color:#bdc3c7;">Resultados de Búsqueda</h6>
+    </table>
+  </div>
+</div>
 
-
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html> 
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h6 class="card-title mt-3 mb-3">
+            <i class="fas fa-history"></i> Historial de Caja de Cochera
+        </h6>
+
+        {% if error_message %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error_message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        <div class="form-container p-2" style="background-color: #eaeef0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th> </th>
+                        <th scope="col">Fecha y Hora</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Tipo de Usuario</th>
+                        <th scope="col">Monto de Transacción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if historiales %}
+                        {% for historial in historiales %}
+                            <tr>
+                                <td> <a href=""><i class="fas fa-arrow-right"></i></a></td>                                
+                                <td>{{ historial.fecha_hora_transaccion }}</td>
+                                <td>{{ historial.usuario.username }}</td>
+                                <td>{{ historial.tipo_usuario }}</td>
+                                <td>S/ {{ historial.monto_transaccion }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay registros disponibles.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr />
+        <div class="mb-3">
+            <h2>Total de Ingresos: S/ {{ total_ingresos|default:0 }}</h2>
+        </div>
+    </div>
+{% endblock %}

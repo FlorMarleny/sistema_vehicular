@@ -52,3 +52,18 @@
 .btn-submit:hover {
     background-color: #0056b3;
 }
+
+
+/* archivo: css/registro.css */
+.alert {
+    display: inline-block;
+    width: auto;
+}
+
+.d-flex.justify-content-center.align-items-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Ajusta la altura según tus necesidades */
+}
+
