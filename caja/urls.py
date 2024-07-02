@@ -14,4 +14,8 @@ urlpatterns = [
     path('historial-caja-lavanderia/', historial_caja_lavanderia, name='historial_caja_lavanderia'),
     path('historial-caja-cochera/', historial_caja_cochera, name='historial_caja_cochera'),
     path('detalle-caja/<int:pk>/', views.detalle_caja, name='detalle_caja'),
+    path('reporte-general/', views.reporte_general, name='reporte_general'),
+    path('generar-pdf-reporte-general/', views.generar_pdf_reporte_general, name='generar_pdf_reporte_general'),
+
+    
 ]

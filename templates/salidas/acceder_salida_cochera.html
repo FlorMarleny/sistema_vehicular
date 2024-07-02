@@ -154,7 +154,11 @@
         document.getElementById('boton_pagar').addEventListener('click', function() {
             calcularVuelto(); 
             var nuevaVentana = window.open('', '_blank');
+
+
+
             nuevaVentana.document.write(`
+            
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
@@ -167,19 +171,25 @@
                     <style>
                         body {
                             font-family: Arial, sans-serif;
+                            font-size: 12px;
+                            width: 100mm;
+                            margin: 2rem;
+                            padding: 0;
                         }
                         .ticket-container {
-                            width: 300px;
-                            margin: 0 auto;
                             text-align: center;
-                            border: 1px solid #ccc;
-                            padding: 10px;
+                            padding: 5px;                        
                         }
-                        .ticket-container h5 {
-                            margin: 10px 0;
+                        .ticket-container h2, .ticket-container h4, .ticket-container h3{
+                            margin: 5px 0;
+                        }
+                        hr {
+                            border: 0;
+                            border-top: 1px dashed #000;
+                            margin: 5px 0;
                         }
                         .ticket-container p {
-                            margin: 5px 0;
+                            text-align: center;
                         }
                     </style>
                 </head>
@@ -187,7 +197,7 @@
                     <div class="container border">
 
                         <div class="text-center">
-                            <h2 class="font-weight-bold mb-4">TICKET DE SALIDA</h2>
+                            <h2 class="font-weight-bold mb-4 mt-3">TICKET DE SALIDA</h2>
                             <h4 class="mb-3">ESTACIÓN DE RUTA TIPO II</h4>
                             <h4>"SAN PABLO"</h4>
                         </div>
@@ -220,7 +230,23 @@
 
                 </body>
                 </html>
+
             `);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
             // Cerramos el documento HTML
             nuevaVentana.document.close();
             

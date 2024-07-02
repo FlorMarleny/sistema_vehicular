@@ -5,6 +5,7 @@ class TarifaVehiculo(models.Model):
         ('Automóvil', 'Automóvil'),
         ('Camioneta', 'Camioneta'),
         ('Moto', 'Moto'),
+        
     )
 
     tipo_vehiculo = models.CharField(

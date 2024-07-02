@@ -7,6 +7,13 @@ from django.db import models
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from estacionamiento.models import Cochera
+from django.core.paginator import Paginator
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from django.http import HttpResponse
 
 def caja_login(request):
     if request.method == 'POST':
@@ -191,17 +198,107 @@ def historial_caja_cochera(request):
 
 
 
+# def reporte_general(request):
+#     cocheras = Cochera.objects.filter(estado='terminada')
+#     lavanderias = Lavanderia.objects.filter(estado='terminada')
+#     return render(request, 'caja/cajaGeneral/reporteGeneral.html', {'cocheras': cocheras, 'lavanderias': lavanderias})
+
+# from django.shortcuts import render
+# from .models import Cochera, Lavanderia
+
+def reporte_general(request):
+    cocheras = Cochera.objects.filter(estado='terminada').values(
+        'vehiculo__placa', 'tarifa_vehiculo__tipo_vehiculo', 'fecha_hora_entrada', 'fecha_hora_salida', 'tiempo', 'total_a_pagar'
+    )
+    lavanderias = Lavanderia.objects.filter(estado='terminada').values(
+        'vehiculo__placa', 'tarifa_vehiculo__tipo_vehiculo', 'fecha_hora_entrada', 'fecha_hora_salida', 'tiempo', 'total_a_pagar'
+    )
+
+    # Convertir cocheras y lavanderias a listas y agregar el tipo de servicio
+    lista_cocheras = list(cocheras)
+    for cochera in lista_cocheras:
+        cochera['tipo_servicio'] = 'Cochera'
+
+    lista_lavanderias = list(lavanderias)
+    for lavanderia in lista_lavanderias:
+        lavanderia['tipo_servicio'] = 'Lavandería'
+
+    # Unir las dos listas
+    servicios = lista_cocheras + lista_lavanderias
+    
+        # Calcular el total general
+    total_general = sum(servicio['total_a_pagar'] for servicio in servicios)
+
+    # Implementar paginación
+    paginator = Paginator(servicios, 10)  # Mostrar 10 servicios por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'caja/cajaGeneral/reporteGeneral.html', {'servicios': servicios , 'page_obj': page_obj,'total_general': total_general})
 
 
 
 
+def generar_pdf_reporte_general(request):
+    # Obtener todos los registros de Cochera y Lavanderia terminados
+    cocheras = Cochera.objects.filter(estado='terminada').values(
+        'vehiculo__placa', 'tarifa_vehiculo__tipo_vehiculo', 'fecha_hora_entrada', 'fecha_hora_salida', 'tiempo', 'total_a_pagar'
+    )
+    lavanderias = Lavanderia.objects.filter(estado='terminada').values(
+        'vehiculo__placa', 'tarifa_vehiculo__tipo_vehiculo', 'fecha_hora_entrada', 'fecha_hora_salida', 'tiempo', 'total_a_pagar'
+    )
 
+    # Unir cocheras y lavanderias en una lista
+    servicios = list(cocheras) + list(lavanderias)
 
+    # Calcular el total general
+    total_general = sum(servicio['total_a_pagar'] for servicio in servicios)
 
+    # Configuración de estilos para el PDF
+    styles = getSampleStyleSheet()
+    style_title = styles["Title"]
+    style_table = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey)
+    ])
 
+    # Contenido del PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte_general.pdf"'
 
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
 
+    # Título del documento
+    elements.append(Paragraph("Reporte General de Servicios", style_title))
+    elements.append(Paragraph(f"Total General: S/ {total_general}", style_title))
+    elements.append(Paragraph("", style_title))
 
+    # Tabla de servicios
+    data = [['Placa', 'Tipo de Vehículo', 'Fecha y Hora de Entrada', 'Fecha y Hora de Salida', 'Tiempo', 'Total a Pagar']]
+    for servicio in servicios:
+        data.append([
+            servicio['vehiculo__placa'],
+            servicio['tarifa_vehiculo__tipo_vehiculo'],
+            servicio['fecha_hora_entrada'].strftime('%d-%m-%Y %H:%M:%S'),
+            servicio['fecha_hora_salida'].strftime('%d-%m-%Y %H:%M:%S') if servicio['fecha_hora_salida'] else '-',
+            servicio['tiempo'] if servicio['tiempo'] else '-',
+            f"S/ {servicio['total_a_pagar']}"
+        ])
+
+    # Crear tabla y aplicar estilos
+    table = Table(data)
+    table.setStyle(style_table)
+    elements.append(table)
+
+    # Construir el PDF
+    doc.build(elements)
+    return response
 
 
 

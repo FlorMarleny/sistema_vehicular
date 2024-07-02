@@ -31,7 +31,7 @@ class RegistroCierreCajaCochera(models.Model):
     fecha_hora_transaccion = models.DateTimeField(auto_now_add=True)
     monto_transaccion = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    tipo_usuario = models.CharField(max_length=100)  # Ajustar el tamaño según sea necesario
+    tipo_usuario = models.CharField(max_length=100) 
     
     def __str__(self):
         return f"Registro de Cierre de Caja de Cochera - {self.fecha_hora_transaccion}"

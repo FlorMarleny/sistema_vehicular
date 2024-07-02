@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte General</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Reporte General de Servicios</h2>
+
+        <h4>Total General: S/ {{ total_general }}</h4>
+        
+        <!-- Botón para generar PDF -->
+        <form action="{% url 'generar_pdf_reporte_general' %}" method="post" class="form-inline my-2 my-lg-0 justify-content-end">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" style="background-color: #45B649; border-color: #45B649;"> <i class="fas fa-file-pdf"></i> Generar PDF</button>
+        </form>
+        
+        <table class="table table-striped mt-2">
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Tipo de Vehículo</th>
+                    <th>Fecha y Hora de Entrada</th>
+                    <th>Fecha y Hora de Salida</th>
+                    <th>Tiempo</th>
+                    <th>Total a Pagar</th>
+                    <th>Tipo de Servicio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servicio in servicios %}
+                <tr>
+                    <td>{{ servicio.vehiculo__placa }}</td>
+                    <td>{{ servicio.tarifa_vehiculo__tipo_vehiculo }}</td>
+                    <td>{{ servicio.fecha_hora_entrada }}</td>
+                    <td>{{ servicio.fecha_hora_salida|default:"-" }}</td>
+                    <td>{{ servicio.tiempo|default:"-" }}</td>
+                    <td>S/ {{ servicio.total_a_pagar }}</td>
+                    <td>{{ servicio.tipo_servicio }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-primary" href="?page=1">Primera</a>
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="btn btn-primary disabled">{{ page_obj.number }}</span>
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+            {% endif %}
+        </div>
+
+    </div>
+</body>
+</html>

@@ -12,10 +12,12 @@
     </div>
         
     <div class="text-left mt-3">
-        <button type="button" class="btn btn-danger" style="background-color: #CB705D;">Reporte General de Caja</button>
+        {% comment %} <button type="button" class="btn btn-danger" style="background-color: #CB705D;">Reporte General de Caja</button> {% endcomment %}
+        <a href="{% url 'reporte_general' %}" class="btn btn-danger ml-2" style="background-color: #CB705D;">Reporte General de Caja</a>
         <a href="{% url 'historial_caja_lavanderia' %}" class="btn btn-danger ml-2" style="background-color: #CB705D;">Historial Caja Lavandería</a>
         <a href="{% url 'historial_caja_cochera' %}" class="btn btn-danger ml-2" style="background-color: #CB705D;">Historial Caja Cochera</a>
     </div>
 
     
 {% endblock %}
+
