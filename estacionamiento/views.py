@@ -1,3 +1,4 @@
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -15,6 +16,7 @@ from django.urls import reverse
 
 def estacionamiento_view(request):
     return render(request, 'estacionamiento.html')
+
 
 def historial_cochera(request):
     query = request.GET.get('q')
@@ -48,6 +50,7 @@ def historial_cochera(request):
     }
 
     return render(request, 'cochera/historialCochera.html', context)
+
 
 def editar_cochera(request, id):
     cochera = get_object_or_404(Cochera, id=id)
@@ -112,12 +115,14 @@ def editar_cochera(request, id):
     }
     return render(request, 'cochera/opciones/editar_cochera.html', context)
 
+
 def detalles_cochera(request, id):
     cochera = get_object_or_404(Cochera, id=id)
     context = {
         'cochera': cochera
     }
     return render(request, 'cochera/opciones/detalles_cochera.html', context)
+
 
 def eliminar_cochera(request, id):
     if request.method == 'POST':
@@ -127,6 +132,7 @@ def eliminar_cochera(request, id):
 
     # Si no es una solicitud POST, devuelve un error
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 
 def acceder_salida_cochera(request):
     if request.method == 'GET':
@@ -154,54 +160,6 @@ def acceder_salida_cochera(request):
 
     return HttpResponseBadRequest("Método no permitido.")
 
-
-
-# def generar_pdf(request):
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="registro_cochera.pdf"'
-
-#     registros = Cochera.objects.all()
-
-#     # Crear un objeto Story (flujo) para contener todos los elementos del PDF
-#     story = []
-
-#     # Definir el estilo de la tabla
-#     style = TableStyle([
-#         ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Encabezado de fondo
-#         # Alineación centrada para todas las celdas
-#         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-#         ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Líneas de la cuadrícula
-#     ])
-
-#     # Crear una lista de datos para la tabla
-#     data = [['Vehículo', 'Conductor', 'Fecha de Entrada', 'Fecha de Salida']]
-
-#     # Llenar la lista de datos con los registros
-#     for registro in registros:
-#         data.append([
-#             registro.vehiculo,
-#             registro.conductor,
-#             str(registro.fecha_hora_entrada),
-#             str(registro.fecha_hora_salida) if registro.fecha_hora_salida else '',
-#         ])
-
-#     # Crear la tabla y aplicar el estilo
-#     tabla = Table(data)
-#     tabla.setStyle(style)
-#     story.append(tabla)
-
-#     # Crear el documento PDF y agregar el flujo de elementos (Story)
-#     doc = SimpleDocTemplate(response, pagesize=letter)
-#     doc.build(story)
-
-#     return response
-
-# from django.shortcuts import render
-# from django.http import HttpResponse
-# from reportlab.lib.pagesizes import letter
-# from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-# from reportlab.lib import colors
-# from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
@@ -232,27 +190,34 @@ def generar_pdf(request):
     # Agregar el título
     titulo = "<h1 style='text-align: center;'>HISTORIAL DE REGISTRO DE COCHERA</h1>"
     story.append(Paragraph(titulo, estilo_titulo))
-    story.append(Paragraph(f"<p style='text-align: center;'><strong>Total general: S/ {total_general}</strong></p>", estilo_parrafo))
+    story.append(Paragraph(
+        f"<p style='text-align: center;'><strong>Total general: S/ {total_general}</strong></p>", estilo_parrafo))
 
     # Definir el estilo de la tabla
     style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Encabezado de fondo
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alineación centrada para todas las celdas
+        # Alineación centrada para todas las celdas
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Líneas de la cuadrícula
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Fuente Helvetica para toda la tabla
-        ('FONTSIZE', (0, 0), (-1, 0), 12),  # Tamaño de fuente más grande para la fila de encabezado
+        # Fuente Helvetica para toda la tabla
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        # Tamaño de fuente más grande para la fila de encabezado
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
     ])
 
     # Crear una lista de datos para la tabla
-    data = [['Vehículo', 'Conductor', 'Fecha de Entrada', 'Fecha de Salida', 'Precio']]
+    data = [['Vehículo', 'Conductor',
+             'Fecha de Entrada', 'Fecha de Salida', 'Precio']]
 
     # Llenar la lista de datos con los registros de cochera
     for registro in registros:
         data.append([
             registro.vehiculo.placa,
             f"{registro.conductor.nombres} {registro.conductor.apellidos}",
-            str(registro.fecha_hora_entrada.strftime("%Y-%m-%d %H:%M:%S")) if registro.fecha_hora_entrada else '',
-            str(registro.fecha_hora_salida.strftime("%Y-%m-%d %H:%M:%S")) if registro.fecha_hora_salida else '',
+            str(registro.fecha_hora_entrada.strftime("%Y-%m-%d %H:%M:%S")
+                ) if registro.fecha_hora_entrada else '',
+            str(registro.fecha_hora_salida.strftime("%Y-%m-%d %H:%M:%S")
+                ) if registro.fecha_hora_salida else '',
             f"S/ {registro.total_a_pagar}",
         ])
 
@@ -266,17 +231,3 @@ def generar_pdf(request):
     doc.build(story)
 
     return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
